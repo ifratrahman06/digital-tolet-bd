@@ -1,0 +1,530 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --em:#059669;--em2:#047857;--em3:#d1fae5;--em4:#10b981;
+    --white:#ffffff;--bg:#f8faf9;--card:#ffffff;
+    --text:#1a2e25;--text2:#4b6359;--text3:#94a3b8;
+    --border:#e2ece8;--shadow:0 2px 12px rgba(5,150,105,0.08);
+    --rad:12px;--rad2:8px;
+  }
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .bn{font-family:'Hind Siliguri',sans-serif}
+  nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .logo{display:flex;align-items:center;gap:8px}
+  .logo-icon{width:32px;height:32px;background:var(--em);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700}
+  .logo-text{font-size:15px;font-weight:700;color:var(--text)}
+  .logo-text span{color:var(--em)}
+  .nav-links{display:flex;align-items:center;gap:6px}
+  .nav-btn{padding:7px 14px;border-radius:var(--rad2);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:inherit}
+  .nav-btn.ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+  .nav-btn.ghost:hover{background:var(--em3);color:var(--em2);border-color:var(--em4)}
+  .nav-btn.solid{background:var(--em);color:#fff;border:1px solid var(--em)}
+  .nav-btn.solid:hover{background:var(--em2)}
+  .page{display:none}
+  .page.active{display:block}
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#064e3b 0%,#059669 60%,#10b981 100%);padding:56px 24px 64px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.06)}
+  .hero::after{content:'';position:absolute;bottom:-60px;left:-30px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.04)}
+  .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);color:#fff;font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;margin-bottom:18px;border:1px solid rgba(255,255,255,0.2)}
+  .hero-title{font-size:28px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:6px}
+  .hero-sub{font-size:14px;color:rgba(255,255,255,0.8);margin-bottom:28px;font-family:'Hind Siliguri',sans-serif}
+  .search-box{background:#fff;border-radius:var(--rad);padding:6px;display:flex;gap:6px;max-width:520px;margin:0 auto 20px;box-shadow:0 8px 32px rgba(0,0,0,0.15)}
+  .search-box input{flex:1;border:none;outline:none;padding:10px 14px;font-size:14px;font-family:inherit;color:var(--text);background:transparent}
+  .search-box input::placeholder{color:var(--text3)}
+  .search-btn{background:var(--em);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+  .search-btn:hover{background:var(--em2)}
+  .quick-stats{display:flex;justify-content:center;gap:24px;margin-top:8px}
+  .qs{color:rgba(255,255,255,0.85);font-size:12px;text-align:center}
+  .qs strong{display:block;font-size:18px;font-weight:700;color:#fff}
+  /* FILTERS */
+  .filters-bar{background:#fff;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .filters-bar::-webkit-scrollbar{display:none}
+  .filter-chip{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid var(--border);background:#fff;color:var(--text2);transition:all 0.15s;font-family:inherit}
+  .filter-chip.active,.filter-chip:hover{background:var(--em);color:#fff;border-color:var(--em)}
+  .filter-icon{font-size:14px}
+  /* CONTENT */
+  .content{padding:20px 24px 40px;max-width:960px;margin:0 auto}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .section-title{font-size:16px;font-weight:600;color:var(--text)}
+  .see-all{font-size:13px;color:var(--em);cursor:pointer;font-weight:500}
+  .see-all:hover{text-decoration:underline}
+  /* PROPERTY CARDS */
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .prop-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;position:relative}
+  .prop-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .prop-card.rented{opacity:0.62}
+  .prop-img{height:160px;background:var(--em3);display:flex;align-items:center;justify-content:center;font-size:40px;position:relative}
+  .prop-img-emoji{font-size:48px}
+  .rented-badge{position:absolute;top:10px;left:10px;background:rgba(100,116,139,0.9);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+  .avail-badge{position:absolute;top:10px;left:10px;background:var(--em);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+  .cat-badge{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.92);color:var(--text);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
+  .prop-body{padding:14px}
+  .prop-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.35}
+  .prop-loc{font-size:12px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:4px}
+  .prop-loc svg{width:12px;height:12px;fill:var(--em)}
+  .prop-price{font-size:18px;font-weight:700;color:var(--em);margin-bottom:8px}
+  .prop-price span{font-size:12px;font-weight:400;color:var(--text2)}
+  .prop-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .tag{background:var(--em3);color:var(--em2);font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+  .tag.gray{background:#f1f5f9;color:#64748b}
+  .prop-footer{border-top:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;justify-content:space-between}
+  .prop-features{display:flex;gap:10px;font-size:12px;color:var(--text2)}
+  .feat{display:flex;align-items:center;gap:3px}
+  /* DETAIL PAGE */
+  .detail-header{background:#fff;padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+  .back-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .detail-content{max-width:760px;margin:0 auto;padding:20px 24px 100px}
+  .detail-gallery{background:var(--em3);border-radius:var(--rad);height:220px;display:flex;align-items:center;justify-content:center;font-size:80px;margin-bottom:20px;position:relative}
+  .detail-gallery-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+  .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.5)}
+  .dot.active{background:#fff;width:18px;border-radius:4px}
+  .detail-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+  .detail-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .detail-price{font-size:24px;font-weight:700;color:var(--em)}
+  .detail-price span{font-size:14px;font-weight:400;color:var(--text2)}
+  .section-card{background:#fff;border-radius:var(--rad);border:1px solid var(--border);padding:16px;margin-bottom:14px}
+  .sc-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
+  .features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .feature-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);padding:8px;background:var(--bg);border-radius:8px}
+  .feat-icon{width:28px;height:28px;border-radius:6px;background:var(--em3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .facility-chips{display:flex;flex-wrap:wrap;gap:7px}
+  .fac-chip{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--em3);color:var(--em2);border:1px solid rgba(5,150,105,0.2)}
+  .nearby-list{display:flex;flex-direction:column;gap:8px}
+  .nearby-item{display:flex;align-items:center;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;font-size:13px}
+  .nearby-left{display:flex;align-items:center;gap:8px}
+  .nearby-dist{font-size:12px;font-weight:600;color:var(--em);background:var(--em3);padding:2px 8px;border-radius:20px}
+  .map-placeholder{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:var(--rad);height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2e7d32;font-size:13px;font-weight:500;border:1px solid #a5d6a7}
+  .sticky-cta{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:14px 24px;display:flex;gap:10px;z-index:200}
+  .cta-call{flex:1;padding:13px;border-radius:var(--rad2);background:var(--em);color:#fff;font-weight:600;font-size:14px;border:none;cursor:pointer;font-family:inherit}
+  .cta-wp{flex:1;padding:13px;border-radius:var(--rad2);background:#25d366;color:#fff;font-weight:600;font-size:14px;border:none;cursor:pointer;font-family:inherit}
+  /* POST AD */
+  .post-header{background:#fff;padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+  .post-content{max-width:640px;margin:0 auto;padding:20px 24px 60px}
+  .form-section{background:#fff;border-radius:var(--rad);border:1px solid var(--border);padding:18px;margin-bottom:14px}
+  .form-section-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+  .form-row{margin-bottom:12px}
+  .form-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block}
+  .form-label .bn{font-weight:500;color:var(--text3)}
+  .form-input,.form-select,.form-textarea{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--rad2);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color 0.15s;background:#fff}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--em);box-shadow:0 0 0 3px rgba(5,150,105,0.1)}
+  .form-textarea{resize:vertical;min-height:90px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .checkbox-group{display:flex;flex-wrap:wrap;gap:8px}
+  .check-item{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:500;transition:all 0.12s;background:#fff}
+  .check-item input{accent-color:var(--em)}
+  .check-item:hover{border-color:var(--em);background:var(--em3)}
+  .submit-btn{width:100%;padding:14px;background:var(--em);color:#fff;border:none;border-radius:var(--rad);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:6px}
+  .submit-btn:hover{background:var(--em2)}
+  /* FOOTER */
+  footer{background:#064e3b;color:rgba(255,255,255,0.85);padding:36px 24px 24px;margin-top:0}
+  .footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:760px;margin:0 auto 28px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:24px}
+  .footer-brand .logo-text{color:#fff;font-size:17px}
+  .footer-brand .logo-text span{color:#6ee7b7}
+  .footer-desc{font-size:13px;color:rgba(255,255,255,0.6);margin-top:10px;line-height:1.6;font-family:'Hind Siliguri',sans-serif}
+  .footer-col-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:12px}
+  .footer-links{display:flex;flex-direction:column;gap:8px}
+  .footer-link{font-size:13px;color:rgba(255,255,255,0.75);text-decoration:none;transition:color 0.12s}
+  .footer-link:hover{color:#6ee7b7}
+  .dev-card{background:rgba(255,255,255,0.06);border-radius:var(--rad);padding:14px;border:1px solid rgba(255,255,255,0.1);max-width:760px;margin:0 auto 20px}
+  .dev-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.4);margin-bottom:10px}
+  .dev-info{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .dev-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px;flex-shrink:0}
+  .dev-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:2px}
+  .dev-uni{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.4}
+  .dev-socials{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .social-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);transition:all 0.12s;display:inline-flex;align-items:center;gap:5px}
+  .social-btn:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.35)}
+  .footer-bottom{text-align:center;font-size:12px;color:rgba(255,255,255,0.35);max-width:760px;margin:0 auto}
+  .toast{position:fixed;top:72px;left:50%;transform:translateX(-50%);background:var(--em);color:#fff;padding:10px 20px;border-radius:var(--rad2);font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity 0.2s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+
+<h2 class="sr-only">Digital To-Let — House Rental Platform for Bangladesh</h2>
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')" style="cursor:pointer">
+    <div class="logo-icon">D</div>
+    <div class="logo-text">Digital <span>To-Let</span></div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn ghost" onclick="showPage('home')">বাড়ি খুঁজুন</button>
+    <button class="nav-btn solid" onclick="showPage('post')">+ বিজ্ঞাপন দিন</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">🏠 Bangladesh's Trusted Rental Platform</div>
+    <div class="hero-title">আপনার স্বপ্নের বাসস্থান খুঁজুন</div>
+    <div class="hero-sub bn">Find Your Perfect Home / সহজেই বাড়ি খুঁজুন</div>
+    <div class="search-box">
+      <input type="text" placeholder="এলাকা লিখুন... (e.g. Dhanmondi, Mirpur)" id="searchInput" />
+      <button class="search-btn" onclick="showToast('Searching...')">খুঁজুন 🔍</button>
+    </div>
+    <div class="quick-stats">
+      <div class="qs"><strong>1,200+</strong>Active Listings</div>
+      <div class="qs"><strong>850+</strong>Happy Tenants</div>
+      <div class="qs"><strong>12</strong>Districts</div>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <button class="filter-chip active" onclick="setFilter(this,'all')"><span class="filter-icon">🏘️</span>সব / All</button>
+    <button class="filter-chip" onclick="setFilter(this,'family')"><span class="filter-icon">👨‍👩‍👧</span>Family</button>
+    <button class="filter-chip" onclick="setFilter(this,'bachelor-male')"><span class="filter-icon">👨</span>Bachelor Male</button>
+    <button class="filter-chip" onclick="setFilter(this,'bachelor-female')"><span class="filter-icon">👩</span>Bachelor Female</button>
+    <button class="filter-chip" onclick="setFilter(this,'sublet')"><span class="filter-icon">🛏️</span>Sublet</button>
+    <button class="filter-chip" onclick="setFilter(this,'budget')"><span class="filter-icon">💰</span>Budget ৳5k–15k</button>
+    <button class="filter-chip" onclick="setFilter(this,'lift')"><span class="filter-icon">🏢</span>Lift আছে</button>
+  </div>
+
+  <div class="content">
+    <div class="section-header">
+      <div class="section-title">Featured Properties / বৈশিষ্ট্যযুক্ত বাড়ি</div>
+      <div class="see-all">সব দেখুন →</div>
+    </div>
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-icon">D</div>
+          <div class="logo-text">Digital <span>To-Let</span></div>
+        </div>
+        <div class="footer-desc bn">বাংলাদেশের সেরা বাড়ি ভাড়া প্ল্যাটফর্ম। সহজেই বাড়ি খুঁজুন এবং বিজ্ঞাপন দিন।</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <div class="footer-links">
+          <a class="footer-link" href="#">🏠 Browse Properties</a>
+          <a class="footer-link" href="#">📋 Post Your Ad</a>
+          <a class="footer-link" href="#">📞 Contact Support</a>
+          <a class="footer-link" href="#">ℹ️ How It Works</a>
+        </div>
+      </div>
+    </div>
+    <div class="dev-card">
+      <div class="dev-title">Developed By</div>
+      <div class="dev-info">
+        <div class="dev-avatar">IH</div>
+        <div>
+          <div class="dev-name">Ifrat Rahman Hamim</div>
+          <div class="dev-uni">Student, Computer Science & Engineering (CSE)<br>Canadian University of Bangladesh (CUB)</div>
+        </div>
+      </div>
+      <div class="dev-socials">
+        <a class="social-btn" href="mailto:Ifratmirdha@gmail.com">✉️ Email</a>
+        <a class="social-btn" href="https://wa.me/8801862228188" target="_blank">💬 WhatsApp: 01862228188</a>
+        <a class="social-btn" href="https://www.facebook.com/share/1LFdA78oXu/?mibextid=wwXIfr" target="_blank">👤 Facebook</a>
+        <a class="social-btn" href="https://www.instagram.com/ifrat_rahman_hamim?igsh=MWpxMTFia216cHB3bQ%3D%3D&utm_source=qr" target="_blank">📸 Instagram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 Digital To-Let. All rights reserved. Made with ❤️ in Bangladesh 🇧🇩</div>
+  </footer>
+</div>
+
+<!-- DETAIL PAGE -->
+<div class="page" id="page-detail">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showPage('home')">←</button>
+    <div>
+      <div style="font-size:15px;font-weight:600" id="detail-title-nav">Property Details</div>
+      <div style="font-size:12px;color:var(--text2)">বিস্তারিত তথ্য</div>
+    </div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-gallery" id="detail-gallery">
+      <span id="detail-emoji">🏠</span>
+      <div class="detail-gallery-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <div>
+        <div class="detail-title" id="detail-title-main">Property Name</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;display:flex;align-items:center;gap:4px">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:var(--em)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span id="detail-loc">Location</span>
+        </div>
+      </div>
+      <div id="detail-status-badge"></div>
+    </div>
+    <div class="detail-price" id="detail-price">৳0 <span>/ month</span></div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Advance: <strong id="detail-advance" style="color:var(--text)">৳0</strong> &nbsp;|&nbsp; <span class="bn">অগ্রিম: </span></div>
+
+    <div class="section-card">
+      <div class="sc-title">Room Details / ঘরের বিবরণ</div>
+      <div class="features-grid" id="detail-features"></div>
+    </div>
+    <div class="section-card">
+      <div class="sc-title">Facilities / সুবিধাসমূহ</div>
+      <div class="facility-chips" id="detail-facilities"></div>
+    </div>
+    <div class="section-card">
+      <div class="sc-title">Nearby / কাছাকাছি</div>
+      <div class="nearby-list">
+        <div class="nearby-item"><div class="nearby-left"><span>🚌</span><span>Bus Stand / বাস স্ট্যান্ড</span></div><span class="nearby-dist">~200m</span></div>
+        <div class="nearby-item"><div class="nearby-left"><span>🕌</span><span>Mosque / মসজিদ</span></div><span class="nearby-dist">~150m</span></div>
+        <div class="nearby-item"><div class="nearby-left"><span>🛒</span><span>Market / বাজার</span></div><span class="nearby-dist">~400m</span></div>
+        <div class="nearby-item"><div class="nearby-left"><span>🏥</span><span>Hospital / হাসপাতাল</span></div><span class="nearby-dist">~1.2km</span></div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="sc-title">Location Map / মানচিত্র</div>
+      <div class="map-placeholder">📍<br><span id="detail-map-loc">Map coming soon</span><br><span style="font-size:11px;opacity:0.7">Google Maps integration</span></div>
+    </div>
+  </div>
+  <div class="sticky-cta">
+    <button class="cta-call" onclick="showToast('Calling owner...')">📞 Call Owner / মালিককে কল করুন</button>
+    <button class="cta-wp" onclick="showToast('Opening WhatsApp...')">💬 WhatsApp</button>
+  </div>
+</div>
+
+<!-- POST AD PAGE -->
+<div class="page" id="page-post">
+  <div class="post-header">
+    <button class="back-btn" onclick="showPage('home')">←</button>
+    <div>
+      <div style="font-size:15px;font-weight:600">Post Your Ad / বিজ্ঞাপন দিন</div>
+      <div style="font-size:12px;color:var(--text2)">বাড়ি ভাড়ার বিজ্ঞাপন দিন</div>
+    </div>
+  </div>
+  <div class="post-content">
+    <div class="form-section">
+      <div class="form-section-title">📋 Basic Info / মৌলিক তথ্য</div>
+      <div class="form-row">
+        <label class="form-label">Title / শিরোনাম <span class="bn">(বাড়ির নাম)</span></label>
+        <input class="form-input" type="text" placeholder="e.g. 3-Bedroom Flat in Mirpur-10">
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Category / ধরন</label>
+          <select class="form-select">
+            <option>Family</option>
+            <option>Bachelor (Male)</option>
+            <option>Bachelor (Female)</option>
+            <option>Sublet</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Status / অবস্থা</label>
+          <select class="form-select">
+            <option>Available / পাওয়া যাচ্ছে</option>
+            <option>Rented / ভাড়া হয়েছে</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">💰 Rent & Advance / ভাড়া ও অগ্রিম</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Monthly Rent / মাসিক ভাড়া (৳)</label>
+          <input class="form-input" type="number" placeholder="e.g. 12000">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Advance / অগ্রিম (৳)</label>
+          <input class="form-input" type="number" placeholder="e.g. 24000">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📍 Location / অবস্থান</div>
+      <div class="form-row">
+        <label class="form-label">Full Address / সম্পূর্ণ ঠিকানা</label>
+        <input class="form-input" type="text" placeholder="House #, Road, Area, District">
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Area / এলাকা</label>
+          <input class="form-input" type="text" placeholder="e.g. Dhanmondi">
+        </div>
+        <div class="form-row">
+          <label class="form-label">District / জেলা</label>
+          <select class="form-select">
+            <option>Dhaka</option><option>Chittagong</option><option>Sylhet</option>
+            <option>Rajshahi</option><option>Khulna</option><option>Barisal</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">🏠 Room Details / ঘরের বিবরণ</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Bedrooms / শোবার ঘর</label>
+          <input class="form-input" type="number" placeholder="e.g. 3" min="1">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Bathrooms / বাথরুম</label>
+          <input class="form-input" type="number" placeholder="e.g. 2" min="1">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Balcony / বারান্দা</label>
+          <select class="form-select"><option>Yes / আছে</option><option>No / নেই</option></select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Floor / তলা</label>
+          <input class="form-input" type="number" placeholder="e.g. 4" min="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Max Members / সর্বোচ্চ সদস্য</label>
+        <input class="form-input" type="number" placeholder="e.g. 5" min="1">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">✅ Facilities / সুযোগ-সুবিধা</div>
+      <div class="checkbox-group">
+        <label class="check-item"><input type="checkbox"> 🛗 Lift / লিফট</label>
+        <label class="check-item"><input type="checkbox"> 🔥 Gas Line / গ্যাস লাইন</label>
+        <label class="check-item"><input type="checkbox"> 🚗 Parking / পার্কিং</label>
+        <label class="check-item"><input type="checkbox"> 🛡️ Security / নিরাপত্তা</label>
+        <label class="check-item"><input type="checkbox"> 💧 Water / পানি</label>
+        <label class="check-item"><input type="checkbox"> ⚡ Generator</label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">👤 For Bachelors / ব্যাচেলরদের জন্য</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Gender Preference / লিঙ্গ পছন্দ</label>
+          <select class="form-select">
+            <option>Any / যেকোনো</option>
+            <option>Male Only / শুধু ছেলে</option>
+            <option>Female Only / শুধু মেয়ে</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Occupation / পেশা</label>
+          <select class="form-select">
+            <option>Any / যেকোনো</option>
+            <option>Student / ছাত্র</option>
+            <option>Job Holder / চাকুরীজীবী</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📝 Description / বিবরণ</div>
+      <textarea class="form-textarea" placeholder="Describe your property... (বাড়ি সম্পর্কে বিস্তারিত লিখুন)"></textarea>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📞 Contact / যোগাযোগ</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Phone / ফোন নম্বর</label>
+          <input class="form-input" type="tel" placeholder="01X-XXXX-XXXX">
+        </div>
+        <div class="form-row">
+          <label class="form-label">WhatsApp (optional)</label>
+          <input class="form-input" type="tel" placeholder="01X-XXXX-XXXX">
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="showToast('বিজ্ঞাপন সফলভাবে পাঠানো হয়েছে! ✅')">বিজ্ঞাপন দিন / Post Ad →</button>
+  </div>
+</div>
+
+<script>
+const props = [
+  {id:1,emoji:'🏙️',title:'Spacious 3-Bedroom Flat',loc:'Dhanmondi, Dhaka',price:18000,advance:36000,cat:'Family',status:'available',rooms:3,baths:2,balcony:true,floor:5,facilities:['Lift','Gas Line','Security','Parking'],gender:'Any',bg:'#d1fae5'},
+  {id:2,emoji:'🏠',title:'Bachelor Room – Mirpur-10',loc:'Mirpur-10, Dhaka',price:6500,advance:13000,cat:'Bachelor Male',status:'available',rooms:1,baths:1,balcony:false,floor:2,facilities:['Gas Line','Water'],gender:'Male Only',bg:'#dbeafe'},
+  {id:3,emoji:'🏢',title:'2BHK Sublet – Gulshan',loc:'Gulshan-2, Dhaka',price:22000,advance:44000,cat:'Sublet',status:'rented',rooms:2,baths:2,balcony:true,floor:8,facilities:['Lift','Gas Line','Security','Parking','Generator'],gender:'Any',bg:'#fce7f3'},
+  {id:4,emoji:'🌿',title:'Female Bachelor Room – Jigatola',loc:'Jigatola, Dhaka',price:7000,advance:14000,cat:'Bachelor Female',status:'available',rooms:1,baths:1,balcony:true,floor:3,facilities:['Gas Line','Water','Security'],gender:'Female Only',bg:'#fef3c7'},
+  {id:5,emoji:'🏗️',title:'Budget Flat – Mohammadpur',loc:'Mohammadpur, Dhaka',price:9500,advance:19000,cat:'Family',status:'available',rooms:2,baths:1,balcony:false,floor:1,facilities:['Gas Line','Water'],gender:'Any',bg:'#ede9fe'},
+  {id:6,emoji:'🌆',title:'Premium Flat – Banani',loc:'Banani, Dhaka',price:35000,advance:70000,cat:'Family',status:'rented',rooms:4,baths:3,balcony:true,floor:10,facilities:['Lift','Gas Line','Security','Parking','Generator'],gender:'Any',bg:'#ffedd5'},
+];
+
+function renderCards(){
+  const grid=document.getElementById('cardsGrid');
+  grid.innerHTML=props.map(p=>`
+    <div class="prop-card${p.status==='rented'?' rented':''}" onclick="openDetail(${p.id})">
+      <div class="prop-img" style="background:${p.bg}">
+        <span class="prop-img-emoji">${p.emoji}</span>
+        <span class="${p.status==='rented'?'rented-badge':'avail-badge'}">${p.status==='rented'?'ভাড়া হয়েছে':'পাওয়া যাচ্ছে'}</span>
+        <span class="cat-badge">${p.cat}</span>
+      </div>
+      <div class="prop-body">
+        <div class="prop-title">${p.title}</div>
+        <div class="prop-loc"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${p.loc}</div>
+        <div class="prop-price">৳${p.price.toLocaleString()} <span>/ মাস</span></div>
+        <div class="prop-tags">
+          ${p.facilities.slice(0,2).map(f=>`<span class="tag">${f}</span>`).join('')}
+          ${p.gender!=='Any'?`<span class="tag gray">${p.gender}</span>`:''}
+        </div>
+      </div>
+      <div class="prop-footer">
+        <div class="prop-features">
+          <span class="feat">🛏 ${p.rooms}</span>
+          <span class="feat">🚿 ${p.baths}</span>
+          ${p.balcony?'<span class="feat">🌿 Balcony</span>':''}
+        </div>
+        <span style="font-size:12px;color:var(--em);font-weight:600">Details →</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openDetail(id){
+  const p=props.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('detail-title-nav').textContent=p.title;
+  document.getElementById('detail-title-main').textContent=p.title;
+  document.getElementById('detail-loc').textContent=p.loc;
+  document.getElementById('detail-price').innerHTML=`৳${p.price.toLocaleString()} <span>/ month</span>`;
+  document.getElementById('detail-advance').textContent=`৳${p.advance.toLocaleString()}`;
+  document.getElementById('detail-emoji').textContent=p.emoji;
+  document.getElementById('detail-gallery').style.background=p.bg;
+  document.getElementById('detail-map-loc').textContent=p.loc;
+  document.getElementById('detail-status-badge').innerHTML=
+    `<span style="background:${p.status==='rented'?'#94a3b8':' var(--em)'};color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600">${p.status==='rented'?'ভাড়া হয়েছে ✓':'পাওয়া যাচ্ছে ✓'}</span>`;
+  document.getElementById('detail-features').innerHTML=`
+    <div class="feature-item"><div class="feat-icon">🛏</div>${p.rooms} Bedroom${p.rooms>1?'s':''}</div>
+    <div class="feature-item"><div class="feat-icon">🚿</div>${p.baths} Bathroom${p.baths>1?'s':''}</div>
+    <div class="feature-item"><div class="feat-icon">🌿</div>Balcony: ${p.balcony?'Yes':'No'}</div>
+    <div class="feature-item"><div class="feat-icon">🏢</div>Floor: ${p.floor}</div>
+    <div class="feature-item"><div class="feat-icon">👤</div>${p.gender}</div>
+    <div class="feature-item"><div class="feat-icon">🏷️</div>${p.cat}</div>
+  `;
+  document.getElementById('detail-facilities').innerHTML=p.facilities.map(f=>`<span class="fac-chip">✓ ${f}</span>`).join('');
+  showPage('detail');
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function setFilter(el,f){
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('Filtering: '+f);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+renderCards();
+</script>

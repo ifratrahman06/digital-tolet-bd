@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#047857" />
+      <stop offset="50%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+
+    <!-- Accent Gradient -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#a7f3d0" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#064e3b" flood-opacity="0.28" />
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Container -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#brandGrad)" filter="url(#softShadow)" />
+
+  <!-- Subtle Inner Border Highlight -->
+  <rect x="28" y="28" width="456" height="456" rx="108" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="4" />
+
+  <!-- Stylized House + "D" Combination -->
+  <!-- Roof Top Chevron -->
+  <path d="M128 236 L256 128 L384 236" fill="none" stroke="#ffffff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Chimney / Highrise Pillar Accent -->
+  <path d="M336 172 V144 H364 V196" fill="none" stroke="url(#accentGrad)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- House Body with Bold "D" Shape Interior -->
+  <path d="M168 224 V360 C168 376 180 388 196 388 H284 C342 388 388 342 388 284 C388 226 342 180 284 180 H256" fill="none" stroke="#ffffff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Inner Keyhole / Window Location Pin Element -->
+  <circle cx="280" cy="284" r="32" fill="url(#accentGrad)" />
+  <circle cx="280" cy="284" r="14" fill="#065f46" />
+
+  <!-- Digital Connectivity Signal Node -->
+  <circle cx="256" cy="128" r="14" fill="#ffffff" />
+  <circle cx="256" cy="128" r="26" fill="none" stroke="url(#accentGrad)" stroke-width="5" opacity="0.8" />
+
+  <!-- Tiny Bangladesh Flag dot accent inside -->
+  <circle cx="168" cy="360" r="12" fill="#ef4444" />
+</svg>

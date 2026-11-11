@@ -1,0 +1,42 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js build output
+/.next/
+/out/
+/build
+/dist
+
+# Environment variables & secrets (CRITICAL)
+.env
+.env.local
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# Temporary uploads & data directory
+/data/
+/public/uploads/
+
+# Debug and system logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Operating System & IDE files
+.DS_Store
+*.pem
+Thumbs.db
+.idea/
+.vscode/
+
+# Media / experiment video files
+*.mp4
+Gemini_Generated_Image_*.png
+IMG_2538.PNG

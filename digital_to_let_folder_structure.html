@@ -1,0 +1,455 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-mono,"Courier New",monospace);font-size:13px;line-height:1.7}
+.tree{padding:16px 0}
+.row{display:flex;align-items:flex-start;padding:1px 0;cursor:default;border-radius:4px;transition:background .1s}
+.row:hover{background:var(--color-background-secondary)}
+.indent{width:20px;flex-shrink:0}
+.connector{color:var(--color-text-tertiary);flex-shrink:0;width:18px;user-select:none}
+.icon{width:20px;flex-shrink:0;font-size:12px;display:flex;align-items:center;justify-content:center}
+.name{color:var(--color-text-primary);font-weight:500}
+.name.folder{color:var(--color-text-info)}
+.name.file{color:var(--color-text-primary);font-weight:400}
+.name.root{color:var(--color-text-success);font-weight:600;font-size:14px}
+.desc{color:var(--color-text-tertiary);font-size:11px;margin-left:10px;font-family:var(--font-sans);align-self:center;font-weight:400}
+.section-gap{height:6px}
+.badge{display:inline-block;font-family:var(--font-sans);font-size:10px;font-weight:500;padding:1px 7px;border-radius:10px;margin-left:8px;vertical-align:middle}
+.badge.route{background:var(--color-background-success);color:var(--color-text-success)}
+.badge.model{background:var(--color-background-warning);color:var(--color-text-warning)}
+.badge.util{background:var(--color-background-info);color:var(--color-text-info)}
+.badge.comp{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+</style>
+
+<h2 class="sr-only">Digital To-Let Next.js folder structure</h2>
+
+<div class="tree">
+
+<div class="row">
+  <span class="icon">📦</span>
+  <span class="name root">digital-to-let/</span>
+  <span class="desc">Project root</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- APP -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">app/</span>
+  <span class="desc">Next.js App Router — all routes live here</span>
+</div>
+
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">(auth)/</span>
+  <span class="desc">Route group — auth pages (no shared layout)</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">login/page.tsx</span>
+  <span class="badge route">route</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">verify-otp/page.tsx</span>
+  <span class="badge route">route</span>
+</div>
+
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">(main)/</span>
+  <span class="desc">Route group — shared navbar/footer layout</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">page.tsx</span>
+  <span class="desc">Home — search + property listing</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">properties/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">page.tsx</span>
+  <span class="desc">Browse / filter all listings</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">[id]/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">page.tsx</span>
+  <span class="desc">Single property detail view</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">post-ad/page.tsx</span>
+  <span class="badge route">route</span>
+  <span class="desc">Owner — create new listing</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">my-ads/page.tsx</span>
+  <span class="badge route">route</span>
+  <span class="desc">Owner — manage own listings</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">profile/page.tsx</span>
+  <span class="badge route">route</span>
+</div>
+
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">api/</span>
+  <span class="desc">Next.js API Routes (REST endpoints)</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">auth/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">send-otp/route.ts</span>
+  <span class="badge route">route</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">verify-otp/route.ts</span>
+  <span class="badge route">route</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">properties/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">route.ts</span>
+  <span class="desc">GET all / POST new</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">[id]/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">route.ts</span>
+  <span class="desc">GET / PATCH / DELETE by id</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">toggle-status/route.ts</span>
+  <span class="desc">PATCH — Available ↔ Rented</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">upload/route.ts</span>
+  <span class="desc">POST — Cloudinary image upload</span>
+</div>
+
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">layout.tsx</span>
+  <span class="desc">Root layout — fonts, providers, metadata</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">globals.css</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">not-found.tsx</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- COMPONENTS -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">components/</span>
+  <span class="desc">Reusable UI components (client-side)</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">layout/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">Navbar.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">Footer.tsx</span>
+  <span class="badge comp">comp</span>
+  <span class="desc">Developer credits & social links</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">property/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">PropertyCard.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">PropertyGrid.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">ImageGallery.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">NearbyPlaces.tsx</span>
+  <span class="badge comp">comp</span>
+  <span class="desc">Bus / Mosque / Market / Hospital</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">StatusToggle.tsx</span>
+  <span class="badge comp">comp</span>
+  <span class="desc">Available ↔ Rented toggle</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">search/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">SearchBar.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">FilterChips.tsx</span>
+  <span class="badge comp">comp</span>
+  <span class="desc">Category / budget / facility filters</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">forms/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">PostAdForm.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">OtpForm.tsx</span>
+  <span class="badge comp">comp</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">ui/</span>
+  <span class="desc">Primitive atoms — Button, Badge, Input, Modal…</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- LIB -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">lib/</span>
+  <span class="desc">Non-UI utilities & integrations</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">db.ts</span>
+  <span class="badge util">util</span>
+  <span class="desc">MongoDB + Mongoose connection singleton</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">cloudinary.ts</span>
+  <span class="badge util">util</span>
+  <span class="desc">Cloudinary SDK config & upload helper</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">auth.ts</span>
+  <span class="badge util">util</span>
+  <span class="desc">OTP generation, session helpers</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">validations.ts</span>
+  <span class="badge util">util</span>
+  <span class="desc">Zod schemas for forms & API input</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">utils.ts</span>
+  <span class="badge util">util</span>
+  <span class="desc">formatPrice, cn(), date helpers…</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- MODELS -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">models/</span>
+  <span class="desc">Mongoose schemas (Step 2)</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">User.ts</span>
+  <span class="badge model">model</span>
+  <span class="desc">Name, Phone, Role, ProfilePic</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">Property.ts</span>
+  <span class="badge model">model</span>
+  <span class="desc">Full listing schema — Step 2</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- TYPES -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">types/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">property.ts</span>
+  <span class="desc">IProperty, ILocation, IFacilities…</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">user.ts</span>
+  <span class="desc">IUser, Role enum</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- HOOKS -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">hooks/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">useProperties.ts</span>
+  <span class="desc">Fetch + filter properties (SWR/React Query)</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">useAuth.ts</span>
+  <span class="desc">Current user session state</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- PUBLIC -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">public/</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">🖼️</span>
+  <span class="name file">logo.svg</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📁</span>
+  <span class="name folder">images/</span>
+  <span class="desc">Static fallback images</span>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- ROOT FILES -->
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">.env.local</span>
+  <span class="desc">MONGODB_URI, CLOUDINARY_*, NEXTAUTH_SECRET</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">next.config.ts</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="connector">├─</span>
+  <span class="icon">📄</span>
+  <span class="name file">tailwind.config.ts</span>
+</div>
+<div class="row">
+  <span class="indent"></span><span class="connector">└─</span>
+  <span class="icon">📄</span>
+  <span class="name file">tsconfig.json</span>
+</div>
+
+</div>

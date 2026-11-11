@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital To-Let BD | ডিজিটাল টু-লেট বাংলাদেশ</title>
+  <meta name="description" content="বাংলাদেশের সবচেয়ে সহজ ও আধুনিক ডিজিটাল বাসা খোঁজা ও টু-লেট প্ল্যাটফর্ম। ব্যাচেলর, ফ্যামিলি ও সাবলেট বাসা সহজেই খুঁজুন।">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --em: #059669;
+      --em2: #047857;
+      --em3: #d1fae5;
+      --em4: #10b981;
+      --white: #ffffff;
+      --bg: #f8faf9;
+      --card: #ffffff;
+      --text: #1a2e25;
+      --text2: #4b6359;
+      --text3: #94a3b8;
+      --border: #e2ece8;
+      --shadow: 0 4px 20px rgba(5, 150, 105, 0.08);
+      --rad: 14px;
+      --rad2: 8px;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bn { font-family: 'Hind Siliguri', sans-serif; }
+
+    /* NAVBAR */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--em4), var(--em2));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(5,150,105,0.25);
+    }
+    .logo-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .logo-text span { color: var(--em); }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--rad2);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn.ghost {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+    .nav-btn.ghost:hover {
+      background: var(--em3);
+      color: var(--em2);
+      border-color: var(--em4);
+    }
+    .nav-btn.solid {
+      background: var(--em);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(5,150,105,0.25);
+    }
+    .nav-btn.solid:hover {
+      background: var(--em2);
+      transform: translateY(-1px);
+    }
+
+    /* PAGE ROUTER */
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #064e3b 0%, #059669 60%, #10b981 100%);
+      padding: 50px 20px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -30px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 30px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(4px);
+    }
+    .hero-title {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .hero-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 26px;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .search-box {
+      background: #fff;
+      border-radius: var(--rad);
+      padding: 6px;
+      display: flex;
+      gap: 8px;
+      max-width: 540px;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+    .search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 10px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: transparent;
+    }
+    .search-box input::placeholder { color: var(--text3); }
+    .search-btn {
+      background: var(--em);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .search-btn:hover { background: var(--em2); }
+    .quick-stats {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-top: 14px;
+    }
+    .qs {
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
+      text-align: center;
+    }
+    .qs strong {
+      display: block;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* FILTERS BAR */
+    .filters-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+    }
+    .filters-bar::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text2);
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .filter-chip:hover {
+      background: var(--em3);
+      color: var(--em2);
+      border-color: var(--em4);
+    }
+    .filter-chip.active {
+      background: var(--em);
+      color: #fff;
+      border-color: var(--em);
+      box-shadow: 0 2px 6px rgba(5,150,105,0.25);
+    }
+
+    /* CONTENT & CARDS GRID */
+    .content {
+      padding: 24px 20px 48px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .count-badge {
+      background: var(--em3);
+      color: var(--em2);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 20px;
+    }
+    .prop-card {
+      background: var(--card);
+      border-radius: var(--rad);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .prop-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: var(--em4);
+    }
+    .prop-card.rented { opacity: 0.7; }
+    .prop-img {
+      height: 170px;
+      background: var(--em3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      user-select: none;
+    }
+    .prop-img-emoji { font-size: 52px; }
+    .avail-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--em);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .rented-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: #64748b;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .cat-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .prop-body {
+      padding: 16px;
+      flex: 1;
+    }
+    .prop-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+    .prop-loc {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .prop-loc svg { width: 13px; height: 13px; fill: var(--em); flex-shrink: 0; }
+    .prop-price {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--em);
+      margin-bottom: 10px;
+    }
+    .prop-price span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
+    }
+    .prop-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .tag {
+      background: var(--em3);
+      color: var(--em2);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .tag.gray {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    .prop-footer {
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fdfdfd;
+    }
+    .prop-features {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text2);
+      font-weight: 500;
+    }
+    .feat { display: flex; align-items: center; gap: 4px; }
+    .detail-arrow {
+      font-size: 12px;
+      color: var(--em);
+      font-weight: 700;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text2);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state-text { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+
+    /* DETAIL VIEW */
+    .detail-header {
+      background: #fff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 64px;
+      z-index: 80;
+    }
+    .back-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .back-btn:hover { background: var(--bg); border-color: var(--em); }
+    .detail-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px 20px 120px;
+    }
+    .detail-gallery {
+      background: var(--em3);
+      border-radius: var(--rad);
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .detail-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .detail-price {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--em);
+    }
+    .detail-price span { font-size: 14px; font-weight: 500; color: var(--text2); }
+    .section-card {
+      background: #fff;
+      border-radius: var(--rad);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .sc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text);
+      padding: 10px;
+      background: var(--bg);
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .feat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--em3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .facility-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .fac-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--em3);
+      color: var(--em2);
+      border: 1px solid rgba(5,150,105,0.25);
+    }
+    .nearby-list { display: flex; flex-direction: column; gap: 10px; }
+    .nearby-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .nearby-left { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .nearby-dist {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--em);
+      background: var(--em3);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* STICKY BOTTOM ACTIONS */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+    }
+    .cta-call {
+      flex: 1;
+      padding: 14px;
+      border-radius: var(--rad2);
+      background: var(--em);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .cta-call:hover { background: var(--em2); }
+    .cta-wp {
+      flex: 1;
+      padding: 14px;
+      border-radius: var(--rad2);
+      background: #25d366;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .cta-wp:hover { background: #1ebc59; }
+
+    /* POST AD FORM */
+    .post-header {
+      background: #fff;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .post-content {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+    .form-section {
+      background: #fff;
+      border-radius: var(--rad);
+      border: 1px solid var(--border);
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .form-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-row { margin-bottom: 14px; }
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--rad2);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      background: #fff;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--em);
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .check-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      background: #fff;
+      transition: all 0.12s;
+    }
+    .check-item input { accent-color: var(--em); }
+    .check-item:hover { border-color: var(--em); background: var(--em3); }
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--em);
+      color: #fff;
+      border: none;
+      border-radius: var(--rad);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(5,150,105,0.25);
+      transition: background 0.15s;
+    }
+    .submit-btn:hover { background: var(--em2); }
+
+    /* FOOTER */
+    footer {
+      background: #064e3b;
+      color: rgba(255,255,255,0.85);
+      padding: 40px 20px 30px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      padding-bottom: 28px;
+    }
+    .footer-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 14px;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; }
+    .footer-link {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.12s;
+    }
+    .footer-link:hover { color: #6ee7b7; }
+    .dev-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--rad);
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      max-width: 800px;
+      margin: 0 auto 24px;
+    }
+    .dev-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 12px;
+    }
+    .dev-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .dev-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#10b981,#059669);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .dev-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .dev-uni { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.4; }
+    .dev-socials { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .social-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.85);
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .social-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border-color: rgba(255,255,255,0.4);
+    }
+    .footer-bottom {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(4px); }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      .hero-title { font-size: 24px; }
+      .hero-sub { font-size: 13px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+      .quick-stats { gap: 16px; }
+      .quick-stats strong { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo" onclick="showPage('home')">
+      <div class="logo-icon">D</div>
+      <div class="logo-text">Digital <span>To-Let</span> BD</div>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn ghost bn" onclick="showPage('home')">বাড়ি খুঁজুন</button>
+      <button class="nav-btn solid bn" onclick="showPage('post')">+ বিজ্ঞাপন দিন</button>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-badge">🇧🇩 বাংলাদেশীদের জন্য সহজ ডিজিটাল টু-লেট</div>
+      <h1 class="hero-title bn">আপনার পছন্দের বাসস্থান খুঁজুন সহজে</h1>
+      <p class="hero-sub bn">ব্যাচেলর, ফ্যামিলি, কিংবা সাবলেট—ঢাকা সহ সারাদেশে সরাসরি বাড়িওয়ালার সাথে যোগাযোগ করে বাসা ভাড়া নিন বিনা খরচে।</p>
+      
+      <div class="search-box">
+        <input type="text" placeholder="এলাকা বা জেলা লিখুন... (যেমন: ধানমন্ডি, Mirpur, গুলশান)" id="searchInput" oninput="handleSearch()" />
+        <button class="search-btn bn" onclick="handleSearch()">খুঁজুন 🔍</button>
+      </div>
+
+      <div class="quick-stats">
+        <div class="qs"><strong id="statListings">6</strong>সক্রিয় লিস্টিং</div>
+        <div class="qs"><strong>১০০%</strong>ফ্রি সার্ভিস</div>
+        <div class="qs"><strong>০%</strong>দালাল কমিশন</div>
+      </div>
+    </div>
+
+    <!-- FILTER CHIPS -->
+    <div class="filters-bar">
+      <button class="filter-chip active bn" onclick="setFilter(this, 'all')"><span>🏘️</span> সব বাসা</button>
+      <button class="filter-chip bn" onclick="setFilter(this, 'family')"><span>👨‍👩‍👧</span> ফ্যামিলি</button>
+      <button class="filter-chip bn" onclick="setFilter(this, 'bachelor-male')"><span>👨</span> ব্যাচেলর (ছেলে)</button>
+      <button class="filter-chip bn" onclick="setFilter(this, 'bachelor-female')"><span>👩</span> ব্যাচেলর (মেয়ে)</button>
+      <button class="filter-chip bn" onclick="setFilter(this, 'sublet')"><span>🛏️</span> সাবলেট</button>
+      <button class="filter-chip bn" onclick="setFilter(this, 'budget')"><span>💰</span> কম বাজেট (≤১৫,০০০)</button>
+      <button class="filter-chip bn" onclick="setFilter(this, 'lift')"><span>🛗</span> লিফট আছে</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="section-header">
+        <div class="section-title bn">
+          উপলব্ধ বাসা সমূহ 
+          <span class="count-badge" id="listingCountBadge">6 টি</span>
+        </div>
+      </div>
+
+      <div class="cards-grid" id="cardsGrid"></div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-text bn">আপনার সার্চ অনুযায়ী কোনো বাসা পাওয়া যায়নি!</div>
+        <p class="bn" style="font-size:13px; color:var(--text3);">অন্য কোনো এলাকা বা ফিল্টার ট্রাই করুন অথবা নতুন বিজ্ঞাপন দিন।</p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <div class="logo">
+            <div class="logo-icon">D</div>
+            <div class="logo-text" style="color:#fff">Digital <span style="color:#6ee7b7">To-Let</span> BD</div>
+          </div>
+          <div class="footer-desc bn">
+            বাংলাদেশের সাধারণ শিক্ষার্থী ও কর্মজীবী মানুষের জন্য তৈরি ডিজিটাল টু-লেট প্ল্যাটফর্ম। কোনো দালাল বা মধ্যস্থতাকারী ছাড়াই সরাসরি বাড়িওয়ালার সাথে যোগাযোগের সেরা মাধ্যম।
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Quick Links</div>
+          <div class="footer-links">
+            <a class="footer-link bn" href="#" onclick="showPage('home'); return false;">🏠 বাসা খুঁজুন</a>
+            <a class="footer-link bn" href="#" onclick="showPage('post'); return false;">📋 ফ্রি বিজ্ঞাপন দিন</a>
+            <a class="footer-link bn" href="https://wa.me/8801862228188" target="_blank">📞 কাস্টমার সাপোর্ট</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEVELOPER INFO -->
+      <div class="dev-card">
+        <div class="dev-title" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Founder & Lead Developer</span>
+          <span style="color:#34d399; font-size:11px;">● Online Support</span>
+        </div>
+        <div class="dev-info" style="display:flex; align-items:center; gap:14px;">
+          <div class="dev-avatar" style="width:54px; height:54px; border-radius:14px; overflow:hidden; border:2px solid #10b981; flex-shrink:0;">
+            <img src="public/images/ifrat-rahman.jpg" alt="Ifrat Rahman Hamim" style="width:100%; height:100%; object-fit:cover;" />
+          </div>
+          <div>
+            <div class="dev-name" style="font-size:16px; font-weight:800; color:#fff;">Ifrat Rahman Hamim</div>
+            <div class="dev-uni bn" style="font-size:12px; color:#cbd5e1; line-height:1.4;">
+              Department of Computer Science & Engineering (CSE)<br>
+              <strong>Canadian University of Bangladesh (CUB)</strong>
+            </div>
+          </div>
+        </div>
+        <div class="dev-socials" style="margin-top:14px; display:flex; flex-wrap:wrap; gap:8px;">
+          <a class="social-btn" href="mailto:ifratmirdha@gmail.com">✉️ ifratmirdha@gmail.com</a>
+          <a class="social-btn" href="https://wa.me/8801862228188" target="_blank">💬 WhatsApp: 01862228188</a>
+          <a class="social-btn" href="https://facebook.com/ifratrahman06" target="_blank">👤 Facebook (@ifratrahman06)</a>
+          <a class="social-btn" href="https://instagram.com/ifratrahman06" target="_blank">📸 Instagram</a>
+          <a class="social-btn" href="https://www.tiktok.com/@ifratrahman06" target="_blank">🎵 TikTok</a>
+          <a class="social-btn" href="https://linkedin.com/in/ifratrahman06" target="_blank">💼 LinkedIn</a>
+          <a class="social-btn" href="https://youtube.com/@ifratrahman06" target="_blank">▶️ YouTube</a>
+          <a class="social-btn" href="https://github.com/ifratrahman06" target="_blank">🐙 GitHub</a>
+          <a class="social-btn" href="https://x.com/ifratrahman06" target="_blank">✖️ Twitter (X)</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>© 2025-2026 Digital To-Let BD. All rights reserved.</div>
+        <div style="font-size:12px;">
+          <a href="#" style="color:#a7f3d0; text-decoration:none;" onclick="alert('Digital To-Let BD কোনো ব্যবহারকারীর ব্যক্তিগত তথ্য তৃতীয় পক্ষের কাছে বিক্রি করে না। শতভাগ নিরাপদ ও দালালমুক্ত ডিজিটাল সেবা।'); return false;">Privacy Policy</a>
+          <span style="opacity:0.4; margin:0 6px;">•</span>
+          <a href="#" style="color:#a7f3d0; text-decoration:none;" onclick="alert('বাসা ভাড়া নেওয়ার পূর্বে অবশ্যই সরেজমিনে পরিদর্শন করুন এবং আর্থিক লেনদেনে সতর্কতা অবলম্বন করুন।'); return false;">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- DETAIL PAGE -->
+  <div class="page" id="page-detail">
+    <div class="detail-header">
+      <button class="back-btn" onclick="showPage('home')">←</button>
+      <div>
+        <div style="font-size:15px;font-weight:700" id="detail-title-nav">Property Details</div>
+        <div style="font-size:12px;color:var(--text2)" class="bn">বিস্তারিত বিবরণ ও মালিকের যোগাযোগ</div>
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <div class="detail-gallery" id="detail-gallery">
+        <span id="detail-emoji">🏠</span>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <div>
+          <div class="detail-title bn" id="detail-title-main">বাসার নাম</div>
+          <div style="font-size:14px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:5px">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:var(--em)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span id="detail-loc">লোকেশন</span>
+          </div>
+        </div>
+        <div id="detail-status-badge"></div>
+      </div>
+
+      <div class="detail-price" id="detail-price">৳০ <span>/ মাস</span></div>
+      <div style="font-size:14px;color:var(--text2);margin-bottom:20px" class="bn">
+        অগ্রিম / সিকিউরিটি: <strong id="detail-advance" style="color:var(--text)">৳০</strong>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-title bn">ঘরের বিবরণ ও তথ্য</div>
+        <div class="features-grid" id="detail-features"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-title bn">উপলব্ধ সুবিধাসমূহ</div>
+        <div class="facility-chips" id="detail-facilities"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-title bn">বিস্তারিত বিবরণ</div>
+        <p id="detail-description" class="bn" style="font-size:14px; line-height:1.6; color:var(--text2);"></p>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-title bn">কাছাকাছি সুবিধাসমূহ</div>
+        <div class="nearby-list">
+          <div class="nearby-item"><div class="nearby-left"><span>🚌</span><span class="bn">বাস স্ট্যান্ড</span></div><span class="nearby-dist">~২০০ মিটার</span></div>
+          <div class="nearby-item"><div class="nearby-left"><span>🕌</span><span class="bn">মসজিদ</span></div><span class="nearby-dist">~১০০ মিটার</span></div>
+          <div class="nearby-item"><div class="nearby-left"><span>🛒</span><span class="bn">কাঁচাবাজার / দোকান</span></div><span class="nearby-dist">~৩০০ মিটার</span></div>
+          <div class="nearby-item"><div class="nearby-left"><span>🏥</span><span class="bn">হাসপাতাল / ফার্মেসি</span></div><span class="nearby-dist">~৮০০ মিটার</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STICKY ACTION BUTTONS -->
+    <div class="sticky-cta">
+      <a class="cta-call bn" id="detail-call-btn" href="tel:01862228188">
+        📞 সরাসরি কল করুন
+      </a>
+      <a class="cta-wp bn" id="detail-wp-btn" href="https://wa.me/8801862228188" target="_blank">
+        💬 WhatsApp মেসেজ
+      </a>
+    </div>
+  </div>
+
+  <!-- POST AD PAGE -->
+  <div class="page" id="page-post">
+    <div class="post-header">
+      <button class="back-btn" onclick="showPage('home')">←</button>
+      <div>
+        <div style="font-size:16px;font-weight:700" class="bn">ফ্রি বিজ্ঞাপন দিন</div>
+        <div style="font-size:12px;color:var(--text2)" class="bn">আপনার ফ্ল্যাট বা রুমের তথ্য দিন</div>
+      </div>
+    </div>
+
+    <div class="post-content">
+      <form id="postAdForm" onsubmit="handlePostAd(event)">
+        <div class="form-section">
+          <div class="form-section-title bn">📋 মৌলিক তথ্য</div>
+          <div class="form-row">
+            <label class="form-label bn">বিজ্ঞাপনের শিরোনাম *</label>
+            <input class="form-input bn" type="text" id="postTitle" placeholder="যেমন: ধানমন্ডিতে ৩ রুমের খোলামেলা ফ্ল্যাট ভাড়া" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label bn">ভাড়ার ধরন *</label>
+              <select class="form-select" id="postCategory">
+                <option value="Family">Family / ফ্যামিলি</option>
+                <option value="Bachelor Male">Bachelor Male / ব্যাচেলর ছেলে</option>
+                <option value="Bachelor Female">Bachelor Female / ব্যাচেলর মেয়ে</option>
+                <option value="Sublet">Sublet / সাবলেট</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">আইকন সিলেক্ট করুন</label>
+              <select class="form-select" id="postEmoji">
+                <option value="🏠">🏠 ছিমছাম বাড়ি</option>
+                <option value="🏙️">🏙️ আধুনিক ফ্ল্যাট</option>
+                <option value="🏢">🏢 হাইরাইজ বিল্ডিং</option>
+                <option value="🌿">🌿 বারান্দা সহ রুম</option>
+                <option value="🌆">🌆 ভিউ ফ্ল্যাট</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title bn">💰 ভাড়া ও অগ্রিম</div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label bn">মাসিক ভাড়া (টাকা) *</label>
+              <input class="form-input" type="number" id="postPrice" placeholder="যেমন: 15000" required min="1000">
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">অগ্রিম / ডিপোজিট (টাকা)</label>
+              <input class="form-input" type="number" id="postAdvance" placeholder="যেমন: 30000" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title bn">📍 অবস্থান ও ঠিকানা</div>
+          <div class="form-row">
+            <label class="form-label bn">এলাকা (Area) *</label>
+            <input class="form-input bn" type="text" id="postArea" placeholder="যেমন: Dhanmondi 27, Mirpur-10, Uttara Sector 4" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label bn">জেলা / শহর *</label>
+              <select class="form-select" id="postDistrict">
+                <option value="Dhaka">Dhaka (ঢাকা)</option>
+                <option value="Chittagong">Chittagong (চট্টগ্রাম)</option>
+                <option value="Sylhet">Sylhet (সিলেট)</option>
+                <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
+                <option value="Khulna">Khulna (খুলনা)</option>
+                <option value="Barisal">Barisal (বরিশাল)</option>
+                <option value="Rangpur">Rangpur (রংপুর)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">বিল্ডিং এর তলা (Floor)</label>
+              <input class="form-input" type="number" id="postFloor" placeholder="যেমন: 4" min="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title bn">🏠 রুমের বিবরণ</div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label bn">বেডরুম সংখ্যা</label>
+              <input class="form-input" type="number" id="postRooms" value="2" min="1">
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">বাথরুম সংখ্যা</label>
+              <input class="form-input" type="number" id="postBaths" value="2" min="1">
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">বারান্দা আছে?</label>
+              <select class="form-select" id="postBalcony">
+                <option value="yes">হ্যাঁ / আছে</option>
+                <option value="no">না / নেই</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">কারা থাকতে পারবে?</label>
+              <select class="form-select" id="postGender">
+                <option value="যেকোনো">যেকোনো</option>
+                <option value="শুধু ছেলে">শুধু ছেলে (Male)</option>
+                <option value="শুধু মেয়ে">শুধু মেয়ে (Female)</option>
+                <option value="ছোট পরিবার">ছোট পরিবার (Family)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title bn">✅ সুবিধাসমূহ</div>
+          <div class="checkbox-group" id="postFacilitiesGroup">
+            <label class="check-item"><input type="checkbox" value="Lift" checked> 🛗 লিফট (Lift)</label>
+            <label class="check-item"><input type="checkbox" value="Gas Line" checked> 🔥 গ্যাস লাইন (Gas)</label>
+            <label class="check-item"><input type="checkbox" value="Generator"> ⚡ জেনারেটর</label>
+            <label class="check-item"><input type="checkbox" value="Security" checked> 🛡️ ২৪/৭ গার্ড</label>
+            <label class="check-item"><input type="checkbox" value="Parking"> 🚗 পার্কিং</label>
+            <label class="check-item"><input type="checkbox" value="WiFi"> 📶 ওয়াইফাই</label>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title bn">📝 বিস্তারিত বিবরণ</div>
+          <textarea class="form-textarea bn" id="postDesc" placeholder="বাসার পরিবেশ, গ্যাস-পানির অবস্থা বা শর্তাবলী সম্পর্কে বিস্তারিত লিখুন..."></textarea>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title bn">📞 আপনার যোগাযোগের তথ্য</div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label bn">মোবাইল নম্বর *</label>
+              <input class="form-input" type="tel" id="postPhone" placeholder="017XXXXXXXX" required>
+            </div>
+            <div class="form-row">
+              <label class="form-label bn">WhatsApp নম্বর</label>
+              <input class="form-input" type="tel" id="postWhatsapp" placeholder="018XXXXXXXX">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn bn">বিজ্ঞাপন প্রকাশ করুন 🚀</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // INITIAL DEFAULT PROPERTIES (Bangladeshi context)
+    const initialProperties = [
+      {
+        id: 1,
+        emoji: '🏙️',
+        title: 'ধানমন্ডি ২৭ এ আলো-বাতাসপূর্ণ ৩ বেডরুমের ফ্ল্যাট',
+        loc: 'Dhanmondi, Dhaka',
+        price: 24000,
+        advance: 48000,
+        cat: 'Family',
+        status: 'available',
+        rooms: 3,
+        baths: 3,
+        balcony: true,
+        floor: 4,
+        facilities: ['Lift', 'Gas Line', 'Security', 'Parking', 'Generator'],
+        gender: 'Family Only',
+        desc: '৪র্থ তলায় সুন্দর আলো-বাতাসপূর্ণ দক্ষিণমুখী ফ্ল্যাট। ২৪ ঘন্টা তিতাস গ্যাস, লিফট এবং নিজস্ব জেনারেটর ব্যাকআপ রয়েছে। শান্ত ও নিরিবিলি পরিবেশ।',
+        phone: '01862228188',
+        whatsapp: '01862228188',
+        bg: '#d1fae5'
+      },
+      {
+        id: 2,
+        emoji: '🏠',
+        title: 'মিরপুর-১০ মেট্রোরেল স্টেশনের কাছে ব্যাচেলর সিট/রুম',
+        loc: 'Mirpur-10, Dhaka',
+        price: 6500,
+        advance: 13000,
+        cat: 'Bachelor Male',
+        status: 'available',
+        rooms: 1,
+        baths: 1,
+        balcony: false,
+        floor: 3,
+        facilities: ['Gas Line', 'Security', 'WiFi'],
+        gender: 'Male Only',
+        desc: 'মেট্রোরেল স্টেশন থেকে মাত্র ৩ মিনিট হাঁটার দূরত্বে। ছাত্র বা চাকরিজীবী ভাইদের জন্য উপযুক্ত। ওয়াইফাই, বুয়া ও খাওয়ার ব্যবস্থা আছে।',
+        phone: '01862228188',
+        whatsapp: '01862228188',
+        bg: '#dbeafe'
+      },
+      {
+        id: 3,
+        emoji: '🏢',
+        title: 'গুলশান-২ লেক ভিউ লাক্সারি সাবলেট মাস্টার বেড',
+        loc: 'Gulshan-2, Dhaka',
+        price: 18000,
+        advance: 30000,
+        cat: 'Sublet',
+        status: 'rented',
+        rooms: 1,
+        baths: 1,
+        balcony: true,
+        floor: 6,
+        facilities: ['Lift', 'Security', 'WiFi', 'Generator'],
+        gender: 'Female / Couple',
+        desc: 'গুলশান-২ এর কাছে লেকভিউ মাস্টার বেডরুম উইথ এটাচড বাথ ও ব্যালকনি। শুধু চাকরিজীবী নারী বা কাপলের জন্য।',
+        phone: '01862228188',
+        whatsapp: '01862228188',
+        bg: '#fce7f3'
+      },
+      {
+        id: 4,
+        emoji: '🌿',
+        title: 'জিগাতলা বাস স্ট্যান্ডের কাছে ফিমেল ব্যাচেলর রুম',
+        loc: 'Jigatola, Dhaka',
+        price: 7500,
+        advance: 15000,
+        cat: 'Bachelor Female',
+        status: 'available',
+        rooms: 1,
+        baths: 1,
+        balcony: true,
+        floor: 2,
+        facilities: ['Gas Line', 'Security', 'WiFi'],
+        gender: 'Female Only',
+        desc: 'ধানমন্ডি ও ঢাকা বিশ্ববিদ্যালয় এর কাছাকাছি পড়াশোনা করা মেয়েদের জন্য সম্পূর্ণ নিরাপদ পরিবেশ। বুয়া ও মিল সিস্টেম বিদ্যমান।',
+        phone: '01862228188',
+        whatsapp: '01862228188',
+        bg: '#fef3c7'
+      },
+      {
+        id: 5,
+        emoji: '🏗️',
+        title: 'মোহাম্মদপুর জাপান গার্ডেন সিটির কাছে বাজেট ফ্ল্যাট',
+        loc: 'Mohammadpur, Dhaka',
+        price: 13500,
+        advance: 25000,
+        cat: 'Family',
+        status: 'available',
+        rooms: 2,
+        baths: 2,
+        balcony: true,
+        floor: 2,
+        facilities: ['Gas Line', 'Security'],
+        gender: 'Family / Small',
+        desc: '২ বেড, ২ বাথ, ডাইনিং এবং কিচেন। গ্যাস সিলিন্ডার লাগাতে হবে না, লাইন গ্যাস আছে। ছোট ফ্যামিলির জন্য পারফেক্ট।',
+        phone: '01862228188',
+        whatsapp: '01862228188',
+        bg: '#ede9fe'
+      },
+      {
+        id: 6,
+        emoji: '🌆',
+        title: 'বনানী ১১ এর সন্নিকটে আধুনিক ৩ বেডরুম ফ্ল্যাট',
+        loc: 'Banani, Dhaka',
+        price: 38000,
+        advance: 75000,
+        cat: 'Family',
+        status: 'rented',
+        rooms: 3,
+        baths: 3,
+        balcony: true,
+        floor: 8,
+        facilities: ['Lift', 'Gas Line', 'Security', 'Parking', 'Generator'],
+        gender: 'Family',
+        desc: 'বনানী ১১ এর প্রাইম লোকেশন। সার্বক্ষণিক লিফট, ইন্টারকম ও সিকিউরিটি সুবিধা। হাই ক্লাস সোসাইটি।',
+        phone: '01862228188',
+        whatsapp: '01862228188',
+        bg: '#ffedd5'
+      }
+    ];
+
+    // LOAD OR PERSIST PROPERTIES TO LOCALSTORAGE
+    function getProperties() {
+      const stored = localStorage.getItem('digital_tolet_listings');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch(e) {
+          console.error(e);
+        }
+      }
+      return initialProperties;
+    }
+
+    function saveProperties(list) {
+      localStorage.setItem('digital_tolet_listings', JSON.stringify(list));
+    }
+
+    let currentList = getProperties();
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    // RENDER LISTINGS CARDS
+    function renderCards() {
+      const grid = document.getElementById('cardsGrid');
+      const emptyState = document.getElementById('emptyState');
+      const badge = document.getElementById('listingCountBadge');
+      const statBadge = document.getElementById('statListings');
+
+      let filtered = currentList.filter(item => {
+        // FILTER CHIP LOGIC
+        if (activeFilter === 'family' && item.cat !== 'Family') return false;
+        if (activeFilter === 'bachelor-male' && item.cat !== 'Bachelor Male') return false;
+        if (activeFilter === 'bachelor-female' && item.cat !== 'Bachelor Female') return false;
+        if (activeFilter === 'sublet' && item.cat !== 'Sublet') return false;
+        if (activeFilter === 'budget' && item.price > 15000) return false;
+        if (activeFilter === 'lift' && !item.facilities.includes('Lift')) return false;
+
+        // SEARCH QUERY LOGIC
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          const matchLoc = item.loc.toLowerCase().includes(q);
+          const matchTitle = item.title.toLowerCase().includes(q);
+          const matchCat = item.cat.toLowerCase().includes(q);
+          if (!matchLoc && !matchTitle && !matchCat) return false;
+        }
+
+        return true;
+      });
+
+      badge.textContent = `${filtered.length} টি`;
+      statBadge.textContent = currentList.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      grid.innerHTML = filtered.map(p => `
+        <div class="prop-card ${p.status === 'rented' ? 'rented' : ''}" onclick="openDetail(${p.id})">
+          <div class="prop-img" style="background:${p.bg || '#d1fae5'}">
+            <span class="prop-img-emoji">${p.emoji || '🏠'}</span>
+            <span class="${p.status === 'rented' ? 'rented-badge' : 'avail-badge'}">
+              ${p.status === 'rented' ? 'ভাড়া হয়েছে' : 'পাওয়া যাচ্ছে'}
+            </span>
+            <span class="cat-badge">${p.cat}</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title bn">${p.title}</div>
+            <div class="prop-loc">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              ${p.loc}
+            </div>
+            <div class="prop-price">৳${Number(p.price).toLocaleString()} <span>/ মাস</span></div>
+            <div class="prop-tags">
+              ${p.facilities.slice(0, 3).map(f => `<span class="tag">${f}</span>`).join('')}
+              ${p.gender && p.gender !== 'Any' ? `<span class="tag gray bn">${p.gender}</span>` : ''}
+            </div>
+          </div>
+          <div class="prop-footer">
+            <div class="prop-features">
+              <span class="feat">🛏 ${p.rooms} রুম</span>
+              <span class="feat">🚿 ${p.baths} বাথ</span>
+              ${p.balcony ? '<span class="feat">🌿 বারান্দা</span>' : ''}
+            </div>
+            <span class="detail-arrow bn">বিস্তারিত →</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // SEARCH & FILTER HANDLERS
+    function handleSearch() {
+      searchQuery = document.getElementById('searchInput').value;
+      renderCards();
+    }
+
+    function setFilter(buttonEl, filterKey) {
+      document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+      buttonEl.classList.add('active');
+      activeFilter = filterKey;
+      renderCards();
+    }
+
+    // DETAIL VIEW
+    function openDetail(id) {
+      const p = currentList.find(x => x.id === id);
+      if (!p) return;
+
+      document.getElementById('detail-title-nav').textContent = p.title;
+      document.getElementById('detail-title-main').textContent = p.title;
+      document.getElementById('detail-loc').textContent = p.loc;
+      document.getElementById('detail-price').innerHTML = `৳${Number(p.price).toLocaleString()} <span>/ মাস</span>`;
+      document.getElementById('detail-advance').textContent = `৳${Number(p.advance || 0).toLocaleString()}`;
+      document.getElementById('detail-emoji').textContent = p.emoji || '🏠';
+      document.getElementById('detail-gallery').style.background = p.bg || '#d1fae5';
+      document.getElementById('detail-description').textContent = p.desc || 'কোনো বিবরণ প্রদান করা হয়নি। বিস্তারিত জানতে বাড়িওয়ালাকে সরাসরি কল করুন।';
+
+      document.getElementById('detail-status-badge').innerHTML = `
+        <span style="background:${p.status === 'rented' ? '#94a3b8' : 'var(--em)'};color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700">
+          ${p.status === 'rented' ? 'ভাড়া হয়ে গেছে ✗' : 'এখনই পাওয়া যাচ্ছে ✓'}
+        </span>
+      `;
+
+      document.getElementById('detail-features').innerHTML = `
+        <div class="feature-item"><div class="feat-icon">🛏</div>${p.rooms} টি বেডরুম</div>
+        <div class="feature-item"><div class="feat-icon">🚿</div>${p.baths} টি বাথরুম</div>
+        <div class="feature-item"><div class="feat-icon">🌿</div>বারান্দা: ${p.balcony ? 'হ্যাঁ' : 'নেই'}</div>
+        <div class="feature-item"><div class="feat-icon">🏢</div>বিল্ডিং এর তলা: ${p.floor || 1}ম তলা</div>
+        <div class="feature-item"><div class="feat-icon">👤</div>${p.gender || 'যেকোনো'}</div>
+        <div class="feature-item"><div class="feat-icon">🏷️</div>${p.cat}</div>
+      `;
+
+      document.getElementById('detail-facilities').innerHTML = p.facilities.map(f => `
+        <span class="fac-chip">✓ ${f}</span>
+      `).join('');
+
+      // Contact Buttons
+      const phoneClean = (p.phone || '01862228188').replace(/[^0-9]/g, '');
+      const wpClean = (p.whatsapp || p.phone || '01862228188').replace(/[^0-9]/g, '');
+      
+      const callBtn = document.getElementById('detail-call-btn');
+      callBtn.href = `tel:${phoneClean}`;
+      callBtn.innerHTML = `📞 সরাসরি কল করুন (${phoneClean})`;
+
+      const wpBtn = document.getElementById('detail-wp-btn');
+      const wpInternational = wpClean.startsWith('88') ? wpClean : (wpClean.startsWith('0') ? '88' + wpClean : '880' + wpClean);
+      const prefilledText = encodeURIComponent(`আসসালামু আলাইকুম, আমি Digital To-Let BD-তে আপনার বিজ্ঞাপনটি "${p.title}" (${p.loc}) দেখেছি। বাসাটি কি এখনো ভাড়া হবে?`);
+      wpBtn.href = `https://wa.me/${wpInternational}?text=${prefilledText}`;
+
+      showPage('detail');
+    }
+
+    // POST AD HANDLER
+    function handlePostAd(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('postTitle').value;
+      const cat = document.getElementById('postCategory').value;
+      const emoji = document.getElementById('postEmoji').value;
+      const price = Number(document.getElementById('postPrice').value);
+      const advance = Number(document.getElementById('postAdvance').value) || (price * 2);
+      const area = document.getElementById('postArea').value;
+      const district = document.getElementById('postDistrict').value;
+      const rooms = Number(document.getElementById('postRooms').value) || 1;
+      const baths = Number(document.getElementById('postBaths').value) || 1;
+      const balcony = document.getElementById('postBalcony').value === 'yes';
+      const floor = Number(document.getElementById('postFloor').value) || 1;
+      const gender = document.getElementById('postGender').value;
+      const desc = document.getElementById('postDesc').value;
+      const phone = document.getElementById('postPhone').value;
+      const whatsapp = document.getElementById('postWhatsapp').value || phone;
+
+      // Collect facilities
+      const facilities = [];
+      document.querySelectorAll('#postFacilitiesGroup input:checked').forEach(cb => {
+        facilities.push(cb.value);
+      });
+
+      const newListing = {
+        id: Date.now(),
+        emoji: emoji,
+        title: title,
+        loc: `${area}, ${district}`,
+        price: price,
+        advance: advance,
+        cat: cat,
+        status: 'available',
+        rooms: rooms,
+        baths: baths,
+        balcony: balcony,
+        floor: floor,
+        facilities: facilities.length > 0 ? facilities : ['Gas Line', 'Water'],
+        gender: gender,
+        desc: desc,
+        phone: phone,
+        whatsapp: whatsapp,
+        bg: '#d1fae5'
+      };
+
+      currentList.unshift(newListing);
+      saveProperties(currentList);
+
+      document.getElementById('postAdForm').reset();
+      showToast('বিজ্ঞাপন সফলভাবে পোস্ট হয়েছে! 🎉');
+      showPage('home');
+      renderCards();
+    }
+
+    // NAVIGATION
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + pageId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // TOAST NOTIFICATION
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // INITIAL RENDER
+    renderCards();
+  </script>
+</body>
+</html>
