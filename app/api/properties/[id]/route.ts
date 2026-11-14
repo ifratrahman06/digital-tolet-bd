@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/db';
 import Property from '@/models/Property';
+import { defaultProperties } from '@/lib/defaultData';
 
 export async function GET(
   request: Request,
@@ -12,12 +13,13 @@ export async function GET(
   try {
     const db = await connectToDatabase();
     if (!db) {
+      const match = defaultProperties.find((p) => p.id === id || p._id === id);
+      if (match) {
+        return NextResponse.json({ success: true, data: match, fallback: true });
+      }
       return NextResponse.json(
-        {
-          success: false,
-          error: 'MongoDB Atlas ডাটাবেস সংযোগ অনুপলব্ধ। দয়া করে MONGODB_URI কনফিগারেশন চেক করুন।',
-        },
-        { status: 503 }
+        { success: false, error: 'বাসাটির তথ্য ডাটাবেসে পাওয়া যায়নি।' },
+        { status: 404 }
       );
     }
 

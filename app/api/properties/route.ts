@@ -14,13 +14,34 @@ export async function GET(request: Request) {
     const db = await connectToDatabase();
 
     if (!db) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'MongoDB Atlas ডাটাবেস সংযোগ অনুপলব্ধ। দয়া করে .env.local ফাইলে সঠিক MONGODB_URI কনফিগারেশন চেক করুন।',
-        },
-        { status: 503 }
-      );
+      console.warn('⚠️ MongoDB Atlas connected neither or MONGODB_URI missing. Falling back to default properties.');
+      let filtered = [...defaultProperties];
+      if (category && category !== 'all') {
+        filtered = filtered.filter((p) => p.category === category);
+      }
+      if (district) {
+        filtered = filtered.filter((p) => p.location.district.toLowerCase() === district.toLowerCase());
+      }
+      if (query && query.trim()) {
+        const q = query.trim().toLowerCase();
+        filtered = filtered.filter(
+          (p) =>
+            p.title.toLowerCase().includes(q) ||
+            p.location.area.toLowerCase().includes(q) ||
+            p.location.district.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q)
+        );
+      }
+      if (userId) {
+        filtered = filtered.filter((p) => p.postedBy?.userId === userId);
+      }
+
+      return NextResponse.json({
+        success: true,
+        count: filtered.length,
+        data: filtered,
+        fallback: true,
+      });
     }
 
     // Auto-seed initial realistic listings into MongoDB Atlas if the collection is empty
@@ -98,11 +119,11 @@ export async function POST(request: Request) {
     const nearbyPlaces = Array.isArray(body.nearbyPlaces) && body.nearbyPlaces.length > 0
       ? body.nearbyPlaces
       : [
-          { name: 'নিকটবর্তী বাস স্ট্যান্ড ও পরিবহন মোড়', category: 'transport', distance: '২০০ মিটার' },
-          { name: 'স্থানীয় কাঁচাবাজার ও গ্রোসারি শপ', category: 'market', distance: '১৫০ মিটার' },
-          { name: 'ফার্মেসি ও ক্লিনিক', category: 'hospital', distance: '৩০০ মিটার' },
-          { name: 'জামে মসজিদ', category: 'mosque', distance: '১০০ মিটার' },
-        ];
+        { name: 'নিকটবর্তী বাস স্ট্যান্ড ও পরিবহন মোড়', category: 'transport', distance: '২০০ মিটার' },
+        { name: 'স্থানীয় কাঁচাবাজার ও গ্রোসারি শপ', category: 'market', distance: '১৫০ মিটার' },
+        { name: 'ফার্মেসি ও ক্লিনিক', category: 'hospital', distance: '৩০০ মিটার' },
+        { name: 'জামে মসজিদ', category: 'mosque', distance: '১০০ মিটার' },
+      ];
 
     const propertyPayload = {
       title: String(body.title).trim(),
