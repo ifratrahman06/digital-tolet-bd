@@ -2,13 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Building2, PlusCircle, Home, MessageSquareHeart, LogIn, LogOut, User, ChevronDown, ShieldCheck, Heart, LayoutDashboard } from "lucide-react";
+import { Building2, PlusCircle, Home, MessageSquareHeart, LogIn, LogOut, User, ChevronDown, ShieldCheck, Heart, LayoutDashboard, Bookmark } from "lucide-react";
 import { useFeedback } from "./FeedbackContext";
 import { useAuth } from "./AuthContext";
+import { useBookmarks } from "./BookmarkContext";
 
 export default function Navbar() {
   const { openFeedback } = useFeedback();
   const { user, logout, openLoginModal } = useAuth();
+  const { bookmarkCount } = useBookmarks();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +58,21 @@ export default function Navbar() {
           >
             <Home className="w-4 h-4 text-brand-600" />
             বাসা খুঁজুন
+          </Link>
+
+          {/* Bookmarked / Saved Properties Link with Count Badge */}
+          <Link
+            href="/saved"
+            className="relative inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-bold text-slate-700 bg-white hover:bg-rose-50/80 hover:text-rose-600 border border-slate-200/90 hover:border-rose-300 rounded-xl transition-all font-bn shadow-xs group"
+            title="সংরক্ষিত ও পছন্দের বাসা"
+          >
+            <Bookmark className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline">পছন্দ</span>
+            {bookmarkCount > 0 && (
+              <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-mono font-bold flex items-center justify-center -ml-0.5">
+                {bookmarkCount}
+              </span>
+            )}
           </Link>
 
           {/* Feedback Modal Trigger */}

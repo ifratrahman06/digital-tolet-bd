@@ -59,23 +59,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }, 600);
   };
 
-  const handleDemoLogin = (demoRole: "tenant" | "landlord") => {
-    if (demoRole === "landlord") {
-      login({
-        name: "বাড়িওয়ালা (হামিম সাহেব)",
-        phone: "01862228188",
-        role: "landlord",
-      });
-    } else {
-      login({
-        name: "ভাড়াটিয়া (সাকিব হাসান)",
-        phone: "01712345678",
-        role: "tenant",
-      });
-    }
-    onClose();
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm animate-fade-in">
       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
@@ -244,31 +227,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Login Option */}
-          <div className="mt-5 pt-4 border-t border-slate-100 text-center">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 font-bn">
-              অথবা ১-ক্লিকে টেস্ট ডেমো লগইন করুন
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => handleDemoLogin("landlord")}
-                className="flex-1 py-2 px-3 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 text-xs font-bold font-bn transition-all flex items-center justify-center gap-1.5"
-              >
-                <Building className="w-3.5 h-3.5 text-brand-600" />
-                বাড়িওয়ালা ডেমো
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin("tenant")}
-                className="flex-1 py-2 px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold font-bn transition-all flex items-center justify-center gap-1.5"
-              >
-                <User className="w-3.5 h-3.5 text-slate-600" />
-                ভাড়াটিয়া ডেমো
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

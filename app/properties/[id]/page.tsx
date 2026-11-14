@@ -29,18 +29,32 @@ import {
   User,
   Clock,
   Layers,
+  Bookmark,
+  Camera,
+  BadgeCheck,
+  Maximize2,
+  Lock,
 } from "lucide-react";
 import { formatBDT } from "@/lib/utils";
 import { IProperty, IComment, INearbyPlace } from "@/types/property";
 import { useAuth } from "@/components/AuthContext";
+import { useBookmarks } from "@/components/BookmarkContext";
+import PhotoGalleryModal from "@/components/PhotoGalleryModal";
+import DirectMessageModal from "@/components/DirectMessageModal";
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { user } = useAuth();
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+
   const [property, setProperty] = useState<IProperty | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+
+  // Gallery Modal & Direct Message Modal state
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
   // Reaction State
   const [likes, setLikes] = useState(0);
@@ -54,9 +68,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [commentSuccess, setCommentSuccess] = useState(false);
 
+  const propertyId = resolvedParams.id;
+  const bookmarked = isBookmarked(propertyId);
+
   useEffect(() => {
     fetchProperty();
-  }, [resolvedParams.id]);
+  }, [propertyId]);
 
   useEffect(() => {
     if (user?.name && !commenterName) {
@@ -67,7 +84,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const fetchProperty = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/properties/${resolvedParams.id}`);
+      const res = await fetch(`/api/properties/${propertyId}`);
       const data = await res.json();
       if (data.success && data.data) {
         setProperty(data.data);
@@ -76,7 +93,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
         try {
           const likedList = JSON.parse(localStorage.getItem("digital_tolet_liked_ids") || "[]");
-          if (likedList.includes(resolvedParams.id)) {
+          if (likedList.includes(propertyId)) {
             setIsLiked(true);
           }
         } catch (e) {}
@@ -99,14 +116,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     try {
       const likedList = JSON.parse(localStorage.getItem("digital_tolet_liked_ids") || "[]");
       if (nextLiked) {
-        likedList.push(resolvedParams.id);
+        likedList.push(propertyId);
       } else {
-        const idx = likedList.indexOf(resolvedParams.id);
+        const idx = likedList.indexOf(propertyId);
         if (idx > -1) likedList.splice(idx, 1);
       }
       localStorage.setItem("digital_tolet_liked_ids", JSON.stringify(likedList));
 
-      await fetch(`/api/properties/${resolvedParams.id}/like`, {
+      await fetch(`/api/properties/${propertyId}/like`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: nextLiked ? "like" : "unlike" }),
@@ -116,6 +133,10 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     } finally {
       setIsLiking(false);
     }
+  };
+
+  const handleToggleBookmark = () => {
+    toggleBookmark(propertyId);
   };
 
   const handleAddComment = async (e: React.FormEvent) => {
@@ -139,7 +160,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     setTimeout(() => setCommentSuccess(false), 2500);
 
     try {
-      await fetch(`/api/properties/${resolvedParams.id}/comments`, {
+      await fetch(`/api/properties/${propertyId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -165,18 +186,21 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-3">
-        <div className="w-10 h-10 border-3 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-xs font-semibold text-slate-500 font-bn">বাসার বিস্তারিত তথ্য লোড হচ্ছে...</p>
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4 font-bn animate-fade-in">
+        <div className="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-sm font-semibold text-slate-600">বাসার বিস্তারিত তথ্য লোড হচ্ছে...</p>
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-        <h2 className="text-lg font-bold font-bn">বাসাটির তথ্য পাওয়া যায়নি!</h2>
-        <Link href="/" className="inline-block px-5 py-2.5 bg-slate-900 text-white rounded-xl font-bn font-bold text-xs">
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4 font-bn">
+        <h2 className="text-xl font-bold text-slate-800">বাসাটির তথ্য পাওয়া যায়নি!</h2>
+        <Link
+          href="/"
+          className="inline-block px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm shadow-md"
+        >
           হোমপেজে ফিরে যান
         </Link>
       </div>
@@ -193,7 +217,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     : "880" + whatsappClean;
 
   const prefilledMessage = encodeURIComponent(
-    `আসসালামু আলাইকুম, আমি Digital To-Let BD-তে আপনার বিজ্ঞাপনটি "${property.title}" (${property.location.area}) দেখেছি। বাসাটি কি এখনো ভাড়া হবে?`
+    `আসসালামু আলাইকুম, আমি Digital To-Let BD-তে আপনার "${property.title}" (${property.location.area}) বাসাটির বিজ্ঞাপনটি দেখেছি। বাসাটি কি এখনো ভাড়া দেওয়া বাকি আছে?`
   );
 
   const imagesList =
@@ -203,7 +227,6 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
   const currentDisplayImage = imagesList[activeImageIdx] || imagesList[0];
 
-  // Helper to get category icon
   const getNearbyIcon = (cat: string) => {
     switch (cat) {
       case "hospital":
@@ -229,28 +252,44 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  const mapQueryEncoded = encodeURIComponent(property.location.mapQuery || `${property.location.area}, ${property.location.district}, Bangladesh`);
+  const mapQueryEncoded = encodeURIComponent(
+    property.location.mapQuery || `${property.location.area}, ${property.location.district}, Bangladesh`
+  );
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQueryEncoded}`;
   const embedMapUrl = `https://maps.google.com/maps?q=${mapQueryEncoded}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
   return (
-    <div className="pb-28">
+    <div className="pb-28 font-bn animate-fade-in">
       {/* Top Header Navigation */}
-      <div className="bg-white border-b border-slate-200/80 sticky top-16 z-30">
+      <div className="bg-white border-b border-slate-200/80 sticky top-16 z-30 shadow-xs">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-brand-600 transition-colors font-bn"
+            className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-brand-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             সব লিস্টিং দেখুন
           </Link>
 
           <div className="flex items-center gap-2">
-            {/* Interactive Like Button */}
+            {/* BOOKMARK BUTTON */}
+            <button
+              onClick={handleToggleBookmark}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs ${
+                bookmarked
+                  ? "bg-rose-50 border-rose-200 text-rose-600 shadow-rose-100"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-rose-50/50"
+              }`}
+              title={bookmarked ? "সংরক্ষণ তালিকা থেকে সরান" : "পছন্দের তালিকায় সংরক্ষণ করুন"}
+            >
+              <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? "fill-rose-600 text-rose-600" : ""}`} />
+              <span className="hidden sm:inline">{bookmarked ? "সংরক্ষিত" : "পছন্দ"}</span>
+            </button>
+
+            {/* LIKE BUTTON */}
             <button
               onClick={handleToggleLike}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs ${
                 isLiked
                   ? "bg-rose-50 border-rose-200 text-rose-600"
                   : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -260,10 +299,10 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <span className="font-mono">{likes}</span>
             </button>
 
-            {/* Share Button */}
+            {/* SHARE BUTTON */}
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors font-bn"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-xs"
             >
               <Share2 className="w-3.5 h-3.5" />
               {copied ? "লিংক কপি হয়েছে!" : "শেয়ার"}
@@ -273,38 +312,56 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
-        {/* Photo Showcase Gallery */}
+        {/* PHOTO SHOWCASE GALLERY & LIGHTBOX TRIGGER */}
         <div className="space-y-3">
-          <div className="rounded-3xl bg-slate-900 h-72 sm:h-[420px] overflow-hidden border border-slate-200/80 relative shadow-sm">
+          <div className="rounded-3xl bg-slate-900 h-72 sm:h-[430px] overflow-hidden border border-slate-200/80 relative shadow-md group cursor-pointer">
             <img
               src={currentDisplayImage}
               alt={property.title}
-              className="w-full h-full object-cover transition-opacity duration-300"
+              onClick={() => setIsGalleryOpen(true)}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
             />
 
             {/* Top Badges */}
-            <div className="absolute top-4 left-4 flex items-center gap-2">
-              <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-brand-600 text-white shadow-md font-bn flex items-center gap-1.5">
+            <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+              <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-brand-600 text-white shadow-md flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                 {property.status === "available" ? "পাওয়া যাচ্ছে" : "ভাড়া হয়ে গেছে"}
               </span>
+
+              {/* VERIFICATION TRUST BADGE */}
+              <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/40 backdrop-blur-md shadow-md flex items-center gap-1.5">
+                <BadgeCheck className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
+                ১০০% ভেরিফায়েড বাসা
+              </span>
+
               <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-white/90 backdrop-blur-md text-slate-900 shadow-md">
                 {property.category}
               </span>
             </div>
+
+            {/* View Full Gallery Button Overlay */}
+            <button
+              type="button"
+              onClick={() => setIsGalleryOpen(true)}
+              className="absolute bottom-4 right-4 px-4 py-2 rounded-2xl bg-black/75 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md text-xs font-bold flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all"
+            >
+              <Camera className="w-4 h-4 text-emerald-400" />
+              সব ছবি দেখুন ({imagesList.length}টি)
+            </button>
           </div>
 
           {/* Gallery Thumbnails Row */}
           {imagesList.length > 1 && (
-            <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
+            <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none">
               {imagesList.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIdx(idx)}
-                  className={`w-20 sm:w-24 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
+                  className={`w-20 sm:w-24 h-16 rounded-2xl overflow-hidden border-2 transition-all flex-shrink-0 ${
                     activeImageIdx === idx
-                      ? "border-brand-600 ring-2 ring-brand-500/20 scale-105"
-                      : "border-slate-200 opacity-70 hover:opacity-100"
+                      ? "border-emerald-600 ring-2 ring-emerald-500/30 scale-105"
+                      : "border-slate-200 opacity-60 hover:opacity-100"
                   }`}
                 >
                   <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
@@ -314,27 +371,64 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           )}
         </div>
 
+        {/* VERIFICATION TRUST GUARANTEE CARD */}
+        <div className="bg-gradient-to-r from-emerald-950/5 via-teal-950/5 to-emerald-950/5 border border-emerald-300/80 rounded-3xl p-5 sm:p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+                <BadgeCheck className="w-7 h-7" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                  ডিজিটাল টু-লেট বিডি ভেরিফায়েড গ্যারান্টি
+                  <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">
+                    TRUST PASS
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  নিরাপদ ও নির্ভরযোগ্য বাসা নিশ্চিত করতে আমাদের টিম কর্তৃক প্রতিটি তথ্য যাচাইকৃত
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 text-xs font-semibold text-emerald-900">
+              <span className="inline-flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-xs">
+                <Check className="w-3.5 h-3.5 text-emerald-600" /> এনআইডি ভেরিফায়েড
+              </span>
+              <span className="inline-flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-xs">
+                <Check className="w-3.5 h-3.5 text-emerald-600" /> স্পট পরিদর্শনকৃত
+              </span>
+              <span className="inline-flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-xs">
+                <Check className="w-3.5 h-3.5 text-emerald-600" /> ০% দালাল ফি
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Title & Price Header */}
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                 <MapPin className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                <span>{property.location.address || `${property.location.area}, ${property.location.district}`}</span>
+                <span>
+                  {property.location.address || `${property.location.area}, ${property.location.district}`}
+                </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-bn leading-snug">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-snug">
                 {property.title}
               </h1>
             </div>
 
             <div className="md:text-right flex-shrink-0">
-              <div className="text-xs text-slate-400 font-bn">মাসিক ভাড়া</div>
+              <div className="text-xs text-slate-400">মাসিক ভাড়া</div>
               <div className="text-3xl font-black text-slate-900 tracking-tight">
                 {formatBDT(property.price)}
                 <span className="text-sm font-normal text-slate-500 ml-1">/ মাস</span>
               </div>
-              <div className="text-xs text-slate-500 font-bn mt-1">
-                অগ্রিম / সিকিউরিটি: <strong className="text-slate-800">{formatBDT(property.advance)}</strong>
+              <div className="text-xs text-slate-500 mt-1">
+                অগ্রিম / সিকিউরিটি:{" "}
+                <strong className="text-slate-800">{formatBDT(property.advance)}</strong>
               </div>
             </div>
           </div>
@@ -342,42 +436,42 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           {/* Quick Specifications */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-bn mb-1">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mb-1">
                 <Bed className="w-3.5 h-3.5 text-slate-500" />
                 বেডরুম
               </div>
-              <div className="text-base font-extrabold text-slate-800 font-bn">
+              <div className="text-base font-extrabold text-slate-800">
                 {property.details.rooms} টি
               </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-bn mb-1">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mb-1">
                 <Bath className="w-3.5 h-3.5 text-slate-500" />
                 বাথরুম
               </div>
-              <div className="text-base font-extrabold text-slate-800 font-bn">
+              <div className="text-base font-extrabold text-slate-800">
                 {property.details.baths} টি
               </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-bn mb-1">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mb-1">
                 <Wind className="w-3.5 h-3.5 text-slate-500" />
                 বারান্দা
               </div>
-              <div className="text-base font-extrabold text-slate-800 font-bn">
+              <div className="text-base font-extrabold text-slate-800">
                 {property.details.balcony ? "হ্যাঁ (আছে)" : "নেই"}
               </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-bn mb-1">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mb-1">
                 <Layers className="w-3.5 h-3.5 text-slate-500" />
-                বিল্ডিং তলা
+                রুম সাইজ / তলা
               </div>
-              <div className="text-base font-extrabold text-slate-800 font-bn">
-                {property.details.floor || 1}ম তলা
+              <div className="text-base font-extrabold text-slate-800">
+                {property.details.sqft ? `${property.details.sqft} sqft` : `${property.details.floor || 1}ম তলা`}
               </div>
             </div>
           </div>
@@ -385,14 +479,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
         {/* Facilities Section */}
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-4">
-          <h2 className="text-base font-bold text-slate-900 font-bn">
+          <h2 className="text-base font-bold text-slate-900">
             উপলব্ধ সুযোগ-সুবিধাসমূহ
           </h2>
           <div className="flex flex-wrap gap-2.5">
             {property.facilities.map((fac, idx) => (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-50 border border-slate-200/80 text-slate-800 font-bn"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-50 border border-slate-200/80 text-slate-800"
               >
                 <Check className="w-4 h-4 text-brand-600" />
                 {fac}
@@ -403,23 +497,47 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
         {/* Description */}
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-3">
-          <h2 className="text-base font-bold text-slate-900 font-bn">
+          <h2 className="text-base font-bold text-slate-900">
             বিস্তারিত বিবরণ
           </h2>
-          <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-bn whitespace-pre-line">
+          <p className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
             {property.description}
           </p>
+        </div>
+
+        {/* DIRECT OWNER INQUIRY CARD */}
+        <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="space-y-1.5 text-center sm:text-left">
+            <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
+              সরাসরি মালিকের সাথে কথা বলুন
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black">
+              বাসাটি দেখতে চান বা কিছু জানতে চান?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300">
+              মালিক: <strong>{property.contact.ownerName || "বাড়িওয়ালা"}</strong> • মোবাইল: {phone}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsMessageModalOpen(true)}
+            className="px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 flex-shrink-0"
+          >
+            <MessageSquare className="w-4 h-4 text-slate-950" />
+            সরাসরি মেসেজ পাঠান
+          </button>
         </div>
 
         {/* LIVE LOCATION & INTERACTIVE MAP SECTION */}
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 font-bn flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Navigation className="w-5 h-5 text-brand-600" />
                 লাইভ লোকেশন ও ম্যাপ (Live Location Map)
               </h2>
-              <p className="text-xs text-slate-500 font-bn mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 সরাসরি ম্যাপ দেখে সঠিক লোকেশন ও রুট যাচাই করুন
               </p>
             </div>
@@ -428,7 +546,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold font-bn transition-all shadow-xs self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto"
             >
               <Navigation className="w-3.5 h-3.5" />
               Google Maps-এ খুলুন
@@ -453,11 +571,11 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         {/* NEAREST LANDMARKS & ESSENTIAL SERVICES BREAKDOWN */}
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 font-bn flex items-center gap-2">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Compass className="w-5 h-5 text-brand-600" />
               কাছাকাছি গুরুত্বপূর্ণ স্থান ও নাগরিক সেবা (Nearby Landmarks & Services)
             </h2>
-            <p className="text-xs text-slate-500 font-bn mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               বাসাটির আশেপাশের জরুরি স্বাস্থ্যসেবা, বাজার, মেট্রোরেল, স্কুল ও নিরাপত্তামূলক প্রতিষ্ঠান
             </p>
           </div>
@@ -474,11 +592,11 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       {getNearbyIcon(place.category)}
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-800 font-bn leading-snug">
+                      <div className="text-xs font-bold text-slate-800 leading-snug">
                         {place.name}
                       </div>
                       {place.detail && (
-                        <div className="text-[11px] text-slate-500 font-bn mt-0.5">
+                        <div className="text-[11px] text-slate-500 mt-0.5">
                           {place.detail}
                         </div>
                       )}
@@ -491,7 +609,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               ))
             ) : (
-              <div className="col-span-full text-xs text-slate-500 font-bn p-4 bg-slate-50 rounded-2xl text-center">
+              <div className="col-span-full text-xs text-slate-500 p-4 bg-slate-50 rounded-2xl text-center">
                 নিকটবর্তী স্থানসমূহের তথ্য শীঘ্রই আপডেট করা হবে।
               </div>
             )}
@@ -499,14 +617,17 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         </div>
 
         {/* LIVE DISCUSSION & COMMENTS SECTION */}
-        <div id="comments" className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-24">
+        <div
+          id="comments"
+          className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-6 scroll-mt-24"
+        >
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 font-bn flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-brand-600" />
                 প্রশ্ন ও আলোচনা (Questions & Comments)
               </h2>
-              <p className="text-xs text-slate-500 font-bn mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 বাসাটি সম্পর্কে যে কোনো প্রশ্ন বা মতামত লিখুন, বাড়িওয়ালা সরাসরি উত্তর দেবেন
               </p>
             </div>
@@ -516,16 +637,19 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* New Comment Input Form */}
-          <form onSubmit={handleAddComment} className="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+          <form
+            onSubmit={handleAddComment}
+            className="space-y-3 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70"
+          >
             {commentSuccess && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-xl font-bn">
+              <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-xl">
                 আপনার প্রশ্ন বা মন্তব্যটি সফলভাবে প্রকাশিত হয়েছে!
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1 font-bn">
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">
                   আপনার নাম:
                 </label>
                 <input
@@ -533,13 +657,13 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   placeholder="যেমন: তানভীর আহমেদ"
                   value={commenterName}
                   onChange={(e) => setCommenterName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bn bg-white outline-none focus:border-brand-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white outline-none focus:border-brand-500"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 mb-1 font-bn">
+              <label className="block text-[11px] font-bold text-slate-600 mb-1">
                 আপনার প্রশ্ন বা মন্তব্য লিখুন:
               </label>
               <textarea
@@ -548,7 +672,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 placeholder="যেমন: বাসাটি কি আগামী মাসের ১ তারিখ থেকে খালি হবে? গ্যাস ও পানির বিল কি ফিক্সড?"
                 value={newCommentText}
                 onChange={(e) => setNewCommentText(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bn bg-white outline-none focus:border-brand-500 resize-none"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white outline-none focus:border-brand-500 resize-none"
               />
             </div>
 
@@ -556,7 +680,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <button
                 type="submit"
                 disabled={isSubmittingComment}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-brand-600 text-white font-bold text-xs font-bn flex items-center gap-1.5 transition-all shadow-xs disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-brand-600 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5" />
                 {isSubmittingComment ? "পোস্ট হচ্ছে..." : "মন্তব্য প্রকাশ করুন"}
@@ -567,20 +691,23 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           {/* Existing Comments List */}
           <div className="space-y-3">
             {comments.length === 0 ? (
-              <div className="text-center py-8 text-xs text-slate-400 font-bn">
+              <div className="text-center py-8 text-xs text-slate-400">
                 এখনো কোনো মন্তব্য বা প্রশ্ন করা হয়নি। আপনিই প্রথম প্রশ্নটি করুন!
               </div>
             ) : (
               comments.map((c) => (
-                <div key={c.id} className="p-4 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50/50 transition-colors space-y-1.5">
+                <div
+                  key={c.id}
+                  className="p-4 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50/50 transition-colors space-y-1.5"
+                >
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-[10px] uppercase">
                         {c.userName.charAt(0)}
                       </div>
-                      <span className="font-bold text-slate-800 font-bn">{c.userName}</span>
+                      <span className="font-bold text-slate-800">{c.userName}</span>
                       {c.userRole === "landlord" && (
-                        <span className="text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-200 px-2 py-0.5 rounded-full font-bn">
+                        <span className="text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-200 px-2 py-0.5 rounded-full">
                           বাড়িওয়ালা
                         </span>
                       )}
@@ -589,7 +716,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       {new Date(c.createdAt).toLocaleDateString("bn-BD")}
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 font-bn pl-8 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-700 pl-8 leading-relaxed">
                     {c.text}
                   </p>
                 </div>
@@ -599,28 +726,61 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-      {/* STICKY BOTTOM ACTION BAR */}
+      {/* STICKY BOTTOM ACTION BAR WITH DIRECT MESSAGING & CALL */}
       <div className="fixed bottom-0 left-0 right-0 z-40 glass-nav border-t border-slate-200/80 p-3 sm:p-4 shadow-2xl">
-        <div className="max-w-4xl mx-auto flex items-center gap-3">
+        <div className="max-w-4xl mx-auto flex items-center gap-2 sm:gap-3">
           <a
             href={`tel:${phone}`}
-            className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md font-bn"
+            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-md"
           >
             <Phone className="w-4 h-4" />
-            সরাসরি কল ({phone})
+            <span className="hidden sm:inline">সরাসরি</span> কল ({phone})
           </a>
+
+          <button
+            type="button"
+            onClick={() => setIsMessageModalOpen(true)}
+            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-md hover:scale-102"
+          >
+            <MessageSquare className="w-4 h-4" />
+            মেসেজ পাঠান
+          </button>
 
           <a
             href={`https://wa.me/${whatsappInternational}?text=${prefilledMessage}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 py-3 px-4 rounded-xl bg-[#25d366] hover:bg-[#1ebc59] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md font-bn"
+            className="py-3 px-3.5 rounded-xl bg-[#25d366] hover:bg-[#1ebc59] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center transition-all shadow-md"
+            title="WhatsApp এ কথা বলুন"
           >
-            <MessageSquare className="w-4 h-4" />
-            হোয়াটসঅ্যাপ মেসেজ
+            <Send className="w-4 h-4" />
           </a>
         </div>
       </div>
+
+      {/* FULL PHOTO GALLERY LIGHTBOX MODAL */}
+      <PhotoGalleryModal
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+        images={imagesList}
+        initialIndex={activeImageIdx}
+        title={property.title}
+      />
+
+      {/* DIRECT IN-APP MESSAGING MODAL */}
+      <DirectMessageModal
+        isOpen={isMessageModalOpen}
+        onClose={() => setIsMessageModalOpen(false)}
+        property={{
+          id: propertyId,
+          title: property.title,
+          area: property.location.area,
+          district: property.location.district,
+          ownerName: property.contact.ownerName,
+          phone: property.contact.phone,
+          whatsapp: property.contact.whatsapp,
+        }}
+      />
     </div>
   );
 }

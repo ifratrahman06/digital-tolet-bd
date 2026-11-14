@@ -34,6 +34,8 @@ export interface IPropertyDocument extends Document {
   images: string[];
   status: 'available' | 'rented';
   featured: boolean;
+  isVerified?: boolean;
+  verificationBadge?: string;
   likes: number;
   comments: Array<{
     id: string;
@@ -102,6 +104,8 @@ const PropertySchema: Schema = new Schema(
       index: true,
     },
     featured: { type: Boolean, default: false, index: true },
+    isVerified: { type: Boolean, default: true, index: true },
+    verificationBadge: { type: String, default: 'physical_verified' },
     likes: { type: Number, default: 0, min: 0 },
     comments: [
       {

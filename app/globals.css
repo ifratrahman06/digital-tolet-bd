@@ -19,6 +19,18 @@ body {
   background-color: var(--bg);
   color: #1a2e25;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+/* Smooth micro-interactions & image load transitions */
+img {
+  content-visibility: auto;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .font-bn {

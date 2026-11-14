@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FeedbackProvider } from "@/components/FeedbackContext";
 import { AuthProvider } from "@/components/AuthContext";
+import { BookmarkProvider } from "@/components/BookmarkContext";
 
 export const metadata: Metadata = {
   title: "Digital To-Let BD | আধুনিক ও নির্ভরযোগ্য ডিজিটাল বাসা খোঁজা",
@@ -25,11 +26,13 @@ export default function RootLayout({
     <html lang="bn" className="scroll-smooth" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-[#f8faf9] text-[#0f172a] antialiased" suppressHydrationWarning>
         <AuthProvider>
-          <FeedbackProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </FeedbackProvider>
+          <BookmarkProvider>
+            <FeedbackProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </FeedbackProvider>
+          </BookmarkProvider>
         </AuthProvider>
       </body>
     </html>

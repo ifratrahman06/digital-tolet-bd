@@ -49,6 +49,8 @@ export interface IProperty {
   images: string[];
   status: 'available' | 'rented';
   featured?: boolean;
+  isVerified?: boolean;
+  verificationBadge?: 'nid_verified' | 'physical_verified' | 'top_rated' | 'premium';
   likes: number;
   comments: IComment[];
   nearbyPlaces: INearbyPlace[];
