@@ -9,6 +9,7 @@
 /out/
 /build
 /dist
+*.tsbuildinfo
 
 # Environment variables & secrets (CRITICAL)
 .env
@@ -35,6 +36,7 @@ yarn-error.log*
 Thumbs.db
 .idea/
 .vscode/
+.kilo/
 
 # Media / experiment video files
 *.mp4

@@ -354,6 +354,15 @@ export default function MyAdsPage() {
                         দেখুন
                       </Link>
 
+                      {/* Edit Ad */}
+                      <Link
+                        href={`/edit-ad/${id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-all font-bn"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-emerald-600" />
+                        এডিট
+                      </Link>
+
                       {/* Toggle Status */}
                       <button
                         onClick={() => handleToggleStatus(id, property.status)}

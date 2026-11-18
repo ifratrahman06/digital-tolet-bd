@@ -34,6 +34,9 @@ import {
   BadgeCheck,
   Maximize2,
   Lock,
+  Edit3,
+  Trash2,
+  X,
 } from "lucide-react";
 import { formatBDT } from "@/lib/utils";
 import { IProperty, IComment, INearbyPlace } from "@/types/property";
@@ -41,6 +44,7 @@ import { useAuth } from "@/components/AuthContext";
 import { useBookmarks } from "@/components/BookmarkContext";
 import PhotoGalleryModal from "@/components/PhotoGalleryModal";
 import DirectMessageModal from "@/components/DirectMessageModal";
+import NoImagePlaceholder from "@/components/NoImagePlaceholder";
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -67,6 +71,9 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const [commenterName, setCommenterName] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [commentSuccess, setCommentSuccess] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingCommentText, setEditingCommentText] = useState("");
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
 
   const propertyId = resolvedParams.id;
   const bookmarked = isBookmarked(propertyId);
@@ -176,6 +183,46 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     }
   };
 
+  const handleStartEditComment = (comment: IComment) => {
+    setEditingCommentId(comment.id);
+    setEditingCommentText(comment.text);
+  };
+
+  const handleSaveEditComment = async (commentId: string) => {
+    if (!editingCommentText.trim()) return;
+    const updatedText = editingCommentText.trim();
+    setComments((prev) =>
+      prev.map((c) => (c.id === commentId ? { ...c, text: updatedText } : c))
+    );
+    setEditingCommentId(null);
+
+    try {
+      await fetch(`/api/properties/${propertyId}/comments`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId, text: updatedText }),
+      });
+    } catch (err) {
+      console.error("Comment edit failed:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!window.confirm("আপনি কি নিশ্চিত এই মন্তব্যটি মুছে ফেলতে চান?")) return;
+    setDeletingCommentId(commentId);
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+    try {
+      await fetch(`/api/properties/${propertyId}/comments?commentId=${encodeURIComponent(commentId)}`, {
+        method: "DELETE",
+      });
+    } catch (err) {
+      console.error("Comment delete failed:", err);
+    } finally {
+      setDeletingCommentId(null);
+    }
+  };
+
   const handleShare = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
@@ -220,12 +267,13 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     `আসসালামু আলাইকুম, আমি Digital To-Let BD-তে আপনার "${property.title}" (${property.location.area}) বাসাটির বিজ্ঞাপনটি দেখেছি। বাসাটি কি এখনো ভাড়া দেওয়া বাকি আছে?`
   );
 
-  const imagesList =
-    property.images && property.images.length > 0
-      ? property.images
-      : ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&auto=format&fit=crop&q=80"];
+  const hasImages = Boolean(property.images && property.images.length > 0 && property.images[0]);
+  const imagesList = hasImages ? property.images : [];
+  const currentDisplayImage = imagesList[activeImageIdx] || imagesList[0] || "";
 
-  const currentDisplayImage = imagesList[activeImageIdx] || imagesList[0];
+  const canEdit = Boolean(
+    user && (user.role === "landlord" || (property.postedBy?.userId && property.postedBy.userId === user.id))
+  );
 
   const getNearbyIcon = (cat: string) => {
     switch (cat) {
@@ -259,7 +307,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const embedMapUrl = `https://maps.google.com/maps?q=${mapQueryEncoded}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
   return (
-    <div className="pb-28 font-bn animate-fade-in">
+    <div className="pb-36 font-bn animate-fade-in">
       {/* Top Header Navigation */}
       <div className="bg-white border-b border-slate-200/80 sticky top-16 z-30 shadow-xs">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
@@ -272,6 +320,17 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           </Link>
 
           <div className="flex items-center gap-2">
+            {/* EDIT AD BUTTON (FOR POSTER / ADMIN) */}
+            {canEdit && (
+              <Link
+                href={`/edit-ad/${propertyId}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold hover:bg-emerald-100 transition-colors shadow-xs"
+              >
+                <Edit3 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>এডিট বিজ্ঞাপন</span>
+              </Link>
+            )}
+
             {/* BOOKMARK BUTTON */}
             <button
               onClick={handleToggleBookmark}
@@ -314,59 +373,76 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
         {/* PHOTO SHOWCASE GALLERY & LIGHTBOX TRIGGER */}
         <div className="space-y-3">
-          <div className="rounded-3xl bg-slate-900 h-72 sm:h-[430px] overflow-hidden border border-slate-200/80 relative shadow-md group cursor-pointer">
-            <img
-              src={currentDisplayImage}
-              alt={property.title}
-              onClick={() => setIsGalleryOpen(true)}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-            />
+          {hasImages ? (
+            <>
+              <div className="rounded-3xl bg-slate-900 h-72 sm:h-[430px] overflow-hidden border border-slate-200/80 relative shadow-md group cursor-pointer">
+                <img
+                  src={currentDisplayImage}
+                  alt={property.title}
+                  onClick={() => setIsGalleryOpen(true)}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                />
 
-            {/* Top Badges */}
-            <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-brand-600 text-white shadow-md flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                {property.status === "available" ? "পাওয়া যাচ্ছে" : "ভাড়া হয়ে গেছে"}
-              </span>
+                {/* Top Badges */}
+                <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                  <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-brand-600 text-white shadow-md flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                    {property.status === "available" ? "পাওয়া যাচ্ছে" : "ভাড়া হয়ে গেছে"}
+                  </span>
 
-              {/* VERIFICATION TRUST BADGE */}
-              <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/40 backdrop-blur-md shadow-md flex items-center gap-1.5">
-                <BadgeCheck className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
-                ১০০% ভেরিফায়েড বাসা
-              </span>
+                  {/* VERIFICATION TRUST BADGE */}
+                  <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/40 backdrop-blur-md shadow-md flex items-center gap-1.5">
+                    <BadgeCheck className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
+                    ১০০% ভেরিফায়েড বাসা
+                  </span>
 
-              <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-white/90 backdrop-blur-md text-slate-900 shadow-md">
-                {property.category}
-              </span>
-            </div>
+                  <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-white/90 backdrop-blur-md text-slate-900 shadow-md">
+                    {property.category}
+                  </span>
+                </div>
 
-            {/* View Full Gallery Button Overlay */}
-            <button
-              type="button"
-              onClick={() => setIsGalleryOpen(true)}
-              className="absolute bottom-4 right-4 px-4 py-2 rounded-2xl bg-black/75 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md text-xs font-bold flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all"
-            >
-              <Camera className="w-4 h-4 text-emerald-400" />
-              সব ছবি দেখুন ({imagesList.length}টি)
-            </button>
-          </div>
-
-          {/* Gallery Thumbnails Row */}
-          {imagesList.length > 1 && (
-            <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none">
-              {imagesList.map((img, idx) => (
+                {/* View Full Gallery Button Overlay */}
                 <button
-                  key={idx}
-                  onClick={() => setActiveImageIdx(idx)}
-                  className={`w-20 sm:w-24 h-16 rounded-2xl overflow-hidden border-2 transition-all flex-shrink-0 ${
-                    activeImageIdx === idx
-                      ? "border-emerald-600 ring-2 ring-emerald-500/30 scale-105"
-                      : "border-slate-200 opacity-60 hover:opacity-100"
-                  }`}
+                  type="button"
+                  onClick={() => setIsGalleryOpen(true)}
+                  className="absolute bottom-4 right-4 px-4 py-2 rounded-2xl bg-black/75 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md text-xs font-bold flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all"
                 >
-                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                  <Camera className="w-4 h-4 text-emerald-400" />
+                  সব ছবি দেখুন ({imagesList.length}টি)
                 </button>
-              ))}
+              </div>
+
+              {/* Gallery Thumbnails Row */}
+              {imagesList.length > 1 && (
+                <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none">
+                  {imagesList.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImageIdx(idx)}
+                      className={`w-20 sm:w-24 h-16 rounded-2xl overflow-hidden border-2 transition-all flex-shrink-0 ${
+                        activeImageIdx === idx
+                          ? "border-emerald-600 ring-2 ring-emerald-500/30 scale-105"
+                          : "border-slate-200 opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="rounded-3xl overflow-hidden border border-slate-200/80 relative shadow-sm">
+              <NoImagePlaceholder className="w-full h-72 sm:h-[400px]" />
+              <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-brand-600 text-white shadow-md flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  {property.status === "available" ? "পাওয়া যাচ্ছে" : "ভাড়া হয়ে গেছে"}
+                </span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-white/90 backdrop-blur-md text-slate-900 shadow-md">
+                  {property.category}
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -698,7 +774,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               comments.map((c) => (
                 <div
                   key={c.id}
-                  className="p-4 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50/50 transition-colors space-y-1.5"
+                  className="p-4 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50/50 transition-colors space-y-2"
                 >
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
@@ -712,13 +788,64 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {new Date(c.createdAt).toLocaleDateString("bn-BD")}
-                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {new Date(c.createdAt).toLocaleDateString("bn-BD")}
+                      </span>
+
+                      {/* Comment Edit & Delete Actions */}
+                      <button
+                        type="button"
+                        onClick={() => handleStartEditComment(c)}
+                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                        title="মন্তব্য এডিট করুন"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteComment(c.id)}
+                        disabled={deletingCommentId === c.id}
+                        className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        title="মন্তব্য মুছুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 pl-8 leading-relaxed">
-                    {c.text}
-                  </p>
+
+                  {editingCommentId === c.id ? (
+                    <div className="pl-8 space-y-2 pt-1">
+                      <textarea
+                        rows={2}
+                        value={editingCommentText}
+                        onChange={(e) => setEditingCommentText(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm bg-white outline-none focus:border-brand-500"
+                      />
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEditComment(c.id)}
+                          className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold"
+                        >
+                          সংরক্ষণ
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingCommentId(null)}
+                          className="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold"
+                        >
+                          বাতিল
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs sm:text-sm text-slate-700 pl-8 leading-relaxed">
+                      {c.text}
+                    </p>
+                  )}
                 </div>
               ))
             )}
@@ -726,21 +853,21 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-      {/* STICKY BOTTOM ACTION BAR WITH DIRECT MESSAGING & CALL */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 glass-nav border-t border-slate-200/80 p-3 sm:p-4 shadow-2xl">
-        <div className="max-w-4xl mx-auto flex items-center gap-2 sm:gap-3">
+      {/* FLOATING ELEVATED ACTION BAR (LIFTED SAFELY ABOVE NETLIFY BADGE) */}
+      <div className="fixed bottom-14 sm:bottom-6 inset-x-3 sm:max-w-xl sm:mx-auto z-50 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-2.5 sm:p-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <a
             href={`tel:${phone}`}
-            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-md"
+            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-md active:scale-95"
           >
-            <Phone className="w-4 h-4" />
+            <Phone className="w-4 h-4 text-emerald-400" />
             <span className="hidden sm:inline">সরাসরি</span> কল ({phone})
           </a>
 
           <button
             type="button"
             onClick={() => setIsMessageModalOpen(true)}
-            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-md hover:scale-102"
+            className="flex-1 py-3 px-3 sm:px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-md active:scale-95 hover:scale-102"
           >
             <MessageSquare className="w-4 h-4" />
             মেসেজ পাঠান
@@ -750,7 +877,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
             href={`https://wa.me/${whatsappInternational}?text=${prefilledMessage}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-3 px-3.5 rounded-xl bg-[#25d366] hover:bg-[#1ebc59] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center transition-all shadow-md"
+            className="py-3 px-3.5 rounded-xl bg-[#25d366] hover:bg-[#1ebc59] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center transition-all shadow-md active:scale-95"
             title="WhatsApp এ কথা বলুন"
           >
             <Send className="w-4 h-4" />

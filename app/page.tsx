@@ -35,6 +35,7 @@ import { useFeedback } from "@/components/FeedbackContext";
 import { useBookmarks } from "@/components/BookmarkContext";
 import { IProperty } from "@/types/property";
 import { formatBDT } from "@/lib/utils";
+import { BANGLADESH_DISTRICTS } from "@/lib/locations";
 
 const AVAILABLE_FACILITIES = [
   "Lift",
@@ -59,6 +60,8 @@ export default function HomePage() {
 
   // Advanced Filters State
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("all");
+  const [selectedArea, setSelectedArea] = useState<string>("all");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [minSqft, setMinSqft] = useState<string>("");
@@ -104,6 +107,8 @@ export default function HomePage() {
   const resetAllFilters = () => {
     setActiveCategory("all");
     setSearchQuery("");
+    setSelectedDistrict("all");
+    setSelectedArea("all");
     setMinPrice("");
     setMaxPrice("");
     setMinSqft("");
@@ -116,6 +121,8 @@ export default function HomePage() {
   // Active advanced filters counter
   const activeAdvancedFilterCount = useMemo(() => {
     let count = 0;
+    if (selectedDistrict !== "all") count++;
+    if (selectedArea !== "all") count++;
     if (minPrice) count++;
     if (maxPrice) count++;
     if (minSqft) count++;
@@ -124,7 +131,7 @@ export default function HomePage() {
     if (selectedFacilities.length > 0) count += selectedFacilities.length;
     if (verifiedOnly) count++;
     return count;
-  }, [minPrice, maxPrice, minSqft, maxSqft, selectedRooms, selectedFacilities, verifiedOnly]);
+  }, [selectedDistrict, selectedArea, minPrice, maxPrice, minSqft, maxSqft, selectedRooms, selectedFacilities, verifiedOnly]);
 
   // Main filtering logic
   const filteredProperties = useMemo(() => {
@@ -141,30 +148,51 @@ export default function HomePage() {
         return false;
       }
 
-      // 3. Price Range
+      // 3. District filter
+      if (selectedDistrict !== "all") {
+        const dObj = BANGLADESH_DISTRICTS.find((d) => d.name === selectedDistrict);
+        const itemDist = (item.location?.district || "").toLowerCase();
+        const targetEn = selectedDistrict.toLowerCase();
+        const targetBn = (dObj?.bn || "").toLowerCase();
+        if (!itemDist.includes(targetEn) && !itemDist.includes(targetBn)) {
+          return false;
+        }
+      }
+
+      // 4. Area filter
+      if (selectedArea !== "all") {
+        const aLower = selectedArea.toLowerCase();
+        const itemArea = (item.location?.area || "").toLowerCase();
+        const itemAddr = (item.location?.address || "").toLowerCase();
+        if (!itemArea.includes(aLower) && !itemAddr.includes(aLower)) {
+          return false;
+        }
+      }
+
+      // 5. Price Range
       if (minPrice && item.price < Number(minPrice)) return false;
       if (maxPrice && item.price > Number(maxPrice)) return false;
 
-      // 4. Room count (Bedrooms)
+      // 6. Room count (Bedrooms)
       if (selectedRooms !== "all") {
         const roomsNum = item.details?.rooms || 1;
         if (selectedRooms === "4+" && roomsNum < 4) return false;
         if (selectedRooms !== "4+" && roomsNum !== Number(selectedRooms)) return false;
       }
 
-      // 5. Sqft Range (Room size)
+      // 7. Sqft Range (Room size)
       const sqft = item.details?.sqft || 0;
       if (minSqft && sqft < Number(minSqft)) return false;
       if (maxSqft && sqft > Number(maxSqft)) return false;
 
-      // 6. Facilities multi-select
+      // 8. Facilities multi-select
       if (selectedFacilities.length > 0) {
         const itemFacilities = item.facilities || [];
         const hasAll = selectedFacilities.every((f) => itemFacilities.includes(f));
         if (!hasAll) return false;
       }
 
-      // 7. Search query
+      // 9. Search query
       if (searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase();
         const matchTitle = item.title.toLowerCase().includes(q);
@@ -184,6 +212,8 @@ export default function HomePage() {
     activeCategory,
     bookmarkedIds,
     verifiedOnly,
+    selectedDistrict,
+    selectedArea,
     minPrice,
     maxPrice,
     selectedRooms,
@@ -345,6 +375,28 @@ export default function HomePage() {
           </button>
         </div>
 
+        {/* QUICK AREA CHIPS */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+          <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1 whitespace-nowrap pl-1">
+            <MapPin className="w-3.5 h-3.5 text-brand-600" />
+            জনপ্রিয় এলাকা:
+          </span>
+          {["all", "ধানমন্ডি", "মিরপুর", "গুলশান", "বনানী", "উত্তরা", "বসুন্ধরা", "মোহাম্মদপুর", "বাড্ডা", "মগবাজার", "শান্তিনগর"].map((area) => (
+            <button
+              key={area}
+              type="button"
+              onClick={() => setSelectedArea(area === "all" ? "all" : area)}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+                (selectedArea === "all" && area === "all") || selectedArea === area
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              {area === "all" ? "সব এলাকা" : area}
+            </button>
+          ))}
+        </div>
+
         {/* EXPANDABLE ADVANCED FILTER PANEL */}
         {showAdvancedFilter && (
           <div className="bg-white rounded-3xl border border-emerald-200/80 p-5 sm:p-7 shadow-xl space-y-6 animate-slide-up">
@@ -363,6 +415,53 @@ export default function HomePage() {
                 <RotateCcw className="w-3.5 h-3.5" />
                 সব ফিল্টার রিসেট
               </button>
+            </div>
+
+            {/* District & Area Filter Row */}
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-brand-600" />
+                  জেলা বা বিভাগ নির্বাচন করুন
+                </label>
+                <select
+                  value={selectedDistrict}
+                  onChange={(e) => {
+                    setSelectedDistrict(e.target.value);
+                    setSelectedArea("all");
+                  }}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white outline-none focus:border-emerald-500"
+                >
+                  <option value="all">সব জেলা (সমগ্র বাংলাদেশ)</option>
+                  {BANGLADESH_DISTRICTS.map((d) => (
+                    <option key={d.name} value={d.name}>
+                      {d.bn} ({d.name})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-brand-600" />
+                  নির্দিষ্ট এলাকা (Area) নির্বাচন করুন
+                </label>
+                <select
+                  value={selectedArea}
+                  onChange={(e) => setSelectedArea(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white outline-none focus:border-emerald-500"
+                >
+                  <option value="all">সব এলাকা</option>
+                  {(
+                    BANGLADESH_DISTRICTS.find((d) => d.name === selectedDistrict)?.areas ||
+                    BANGLADESH_DISTRICTS[0].areas
+                  ).map((a) => (
+                    <option key={a.en} value={a.bn}>
+                      {a.bn}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

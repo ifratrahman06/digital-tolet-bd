@@ -21,6 +21,7 @@ import { formatBDT } from "@/lib/utils";
 import { IProperty } from "@/types/property";
 import { useBookmarks } from "./BookmarkContext";
 import DirectMessageModal from "./DirectMessageModal";
+import NoImagePlaceholder from "./NoImagePlaceholder";
 
 interface PropertyCardProps {
   property: IProperty;
@@ -104,12 +105,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const badgeClass =
     categoryBadgeColors[property.category] || "bg-slate-100 text-slate-800 border-slate-200";
 
-  const coverImage =
-    property.images && property.images.length > 0
-      ? property.images[0]
-      : "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&auto=format&fit=crop&q=80";
+  const hasImage = Boolean(property.images && property.images.length > 0 && property.images[0]);
+  const coverImage = hasImage ? property.images[0] : "";
 
-  const photoCount = property.images ? property.images.length : 1;
+  const photoCount = property.images ? property.images.length : 0;
   const commentsCount = property.comments ? property.comments.length : 0;
   const isVerified = property.isVerified !== false;
 
@@ -118,13 +117,17 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       <div className="group bg-white rounded-3xl border border-slate-200/80 hover:border-emerald-500/80 shadow-xs hover:shadow-2xl hover:shadow-emerald-950/10 transition-all duration-300 flex flex-col overflow-hidden hover:-translate-y-1 relative">
         {/* Top Banner / Image Showcase */}
         <div className="relative h-52 bg-slate-100 overflow-hidden">
-          <Link href={`/properties/${propertyId}`}>
-            <img
-              src={coverImage}
-              alt={property.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              loading="lazy"
-            />
+          <Link href={`/properties/${propertyId}`} className="block w-full h-full">
+            {hasImage ? (
+              <img
+                src={coverImage}
+                alt={property.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+            ) : (
+              <NoImagePlaceholder compact className="w-full h-full" />
+            )}
           </Link>
 
           {/* Gradient Overlay for Top Badges */}

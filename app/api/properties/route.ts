@@ -153,9 +153,7 @@ export async function POST(request: Request) {
         whatsapp: body.contact.whatsapp ? String(body.contact.whatsapp).trim() : String(body.contact.phone).trim(),
         ownerName: body.contact.ownerName ? String(body.contact.ownerName).trim() : 'বাড়িওয়ালা',
       },
-      images: Array.isArray(body.images) && body.images.length > 0
-        ? body.images
-        : ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&auto=format&fit=crop&q=80'],
+      images: Array.isArray(body.images) ? body.images.filter(Boolean) : [],
       status: body.status === 'rented' ? 'rented' : 'available',
       featured: Boolean(body.featured),
       likes: 0,

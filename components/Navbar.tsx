@@ -6,6 +6,7 @@ import { Building2, PlusCircle, Home, MessageSquareHeart, LogIn, LogOut, User, C
 import { useFeedback } from "./FeedbackContext";
 import { useAuth } from "./AuthContext";
 import { useBookmarks } from "./BookmarkContext";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function Navbar() {
   const { openFeedback } = useFeedback();
@@ -74,6 +75,9 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+
+          {/* In-App Notification Center */}
+          <NotificationDropdown />
 
           {/* Feedback Modal Trigger */}
           <button
